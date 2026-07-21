@@ -1,0 +1,61 @@
+[1.349s] Invoking command in '/root/workspaces/ros2_ws/src/ai-worker-sim/ffw_bringup': AMENT_PREFIX_PATH=/root/workspaces/ros2_ws/install/ffw_description:${AMENT_PREFIX_PATH} CMAKE_PREFIX_PATH=/root/workspaces/ros2_ws/install/ffw_description:${CMAKE_PREFIX_PATH} PYTHONPATH=/root/workspaces/ros2_ws/build/ffw_bringup/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/root/workspaces/ros2_ws/install/ffw_bringup/lib/python3.12/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../../../build/ffw_bringup build --build-base /root/workspaces/ros2_ws/build/ffw_bringup/build install --record /root/workspaces/ros2_ws/build/ffw_bringup/install.log --install-scripts $base/lib/ffw_bringup --single-version-externally-managed install_data
+[1.682s] running egg_info
+[1.702s] creating ../../../build/ffw_bringup/ffw_bringup.egg-info
+[1.729s] writing ../../../build/ffw_bringup/ffw_bringup.egg-info/PKG-INFO
+[1.756s] writing dependency_links to ../../../build/ffw_bringup/ffw_bringup.egg-info/dependency_links.txt
+[1.766s] writing entry points to ../../../build/ffw_bringup/ffw_bringup.egg-info/entry_points.txt
+[1.767s] writing requirements to ../../../build/ffw_bringup/ffw_bringup.egg-info/requires.txt
+[1.778s] writing top-level names to ../../../build/ffw_bringup/ffw_bringup.egg-info/top_level.txt
+[1.796s] writing manifest file '../../../build/ffw_bringup/ffw_bringup.egg-info/SOURCES.txt'
+[1.882s] reading manifest file '../../../build/ffw_bringup/ffw_bringup.egg-info/SOURCES.txt'
+[1.902s] writing manifest file '../../../build/ffw_bringup/ffw_bringup.egg-info/SOURCES.txt'
+[1.926s] running build
+[1.931s] running build_py
+[1.932s] creating /root/workspaces/ros2_ws/build/ffw_bringup/build
+[1.932s] creating /root/workspaces/ros2_ws/build/ffw_bringup/build/lib
+[1.932s] creating /root/workspaces/ros2_ws/build/ffw_bringup/build/lib/ffw_bringup
+[1.952s] copying ffw_bringup/head_eef_tracker.py -> /root/workspaces/ros2_ws/build/ffw_bringup/build/lib/ffw_bringup
+[1.956s] copying ffw_bringup/__init__.py -> /root/workspaces/ros2_ws/build/ffw_bringup/build/lib/ffw_bringup
+[1.980s] copying ffw_bringup/joint_trajectory_executor.py -> /root/workspaces/ros2_ws/build/ffw_bringup/build/lib/ffw_bringup
+[1.994s] running install
+[2.002s] running install_lib
+[2.037s] creating /root/workspaces/ros2_ws/install/ffw_bringup/lib/python3.12/site-packages/ffw_bringup
+[2.047s] copying /root/workspaces/ros2_ws/build/ffw_bringup/build/lib/ffw_bringup/head_eef_tracker.py -> /root/workspaces/ros2_ws/install/ffw_bringup/lib/python3.12/site-packages/ffw_bringup
+[2.073s] copying /root/workspaces/ros2_ws/build/ffw_bringup/build/lib/ffw_bringup/__init__.py -> /root/workspaces/ros2_ws/install/ffw_bringup/lib/python3.12/site-packages/ffw_bringup
+[2.095s] copying /root/workspaces/ros2_ws/build/ffw_bringup/build/lib/ffw_bringup/joint_trajectory_executor.py -> /root/workspaces/ros2_ws/install/ffw_bringup/lib/python3.12/site-packages/ffw_bringup
+[2.159s] byte-compiling /root/workspaces/ros2_ws/install/ffw_bringup/lib/python3.12/site-packages/ffw_bringup/head_eef_tracker.py to head_eef_tracker.cpython-312.pyc
+[2.194s] byte-compiling /root/workspaces/ros2_ws/install/ffw_bringup/lib/python3.12/site-packages/ffw_bringup/__init__.py to __init__.cpython-312.pyc
+[2.217s] byte-compiling /root/workspaces/ros2_ws/install/ffw_bringup/lib/python3.12/site-packages/ffw_bringup/joint_trajectory_executor.py to joint_trajectory_executor.cpython-312.pyc
+[2.267s] running install_data
+[2.292s] creating /root/workspaces/ros2_ws/install/ffw_bringup/share/ament_index
+[2.293s] creating /root/workspaces/ros2_ws/install/ffw_bringup/share/ament_index/resource_index
+[2.307s] creating /root/workspaces/ros2_ws/install/ffw_bringup/share/ament_index/resource_index/packages
+[2.337s] copying resource/ffw_bringup -> /root/workspaces/ros2_ws/install/ffw_bringup/share/ament_index/resource_index/packages
+[2.337s] copying package.xml -> /root/workspaces/ros2_ws/install/ffw_bringup/share/ffw_bringup
+[2.337s] creating /root/workspaces/ros2_ws/install/ffw_bringup/share/ffw_bringup/launch
+[2.337s] copying launch/ffw_sh5_warehouse_storage_launch.launch.py -> /root/workspaces/ros2_ws/install/ffw_bringup/share/ffw_bringup/launch
+[2.338s] copying launch/ffw_sh5_warehouse_logistics_launch.launch.py -> /root/workspaces/ros2_ws/install/ffw_bringup/share/ffw_bringup/launch
+[2.362s] copying launch/ffw_sh5_warehouse_distribution_launch.launch.py -> /root/workspaces/ros2_ws/install/ffw_bringup/share/ffw_bringup/launch
+[2.409s] copying launch/ffw_sh5_follower_ai_gazebo.launch.py -> /root/workspaces/ros2_ws/install/ffw_bringup/share/ffw_bringup/launch
+[2.432s] creating /root/workspaces/ros2_ws/install/ffw_bringup/share/ffw_bringup/config
+[2.469s] creating /root/workspaces/ros2_ws/install/ffw_bringup/share/ffw_bringup/config/ffw_bg2_rev2_follower
+[2.469s] creating /root/workspaces/ros2_ws/install/ffw_bringup/share/ffw_bringup/config/ffw_bg2_rev3_follower
+[2.469s] creating /root/workspaces/ros2_ws/install/ffw_bringup/share/ffw_bringup/config/ffw_bg2_rev4_follower
+[2.469s] creating /root/workspaces/ros2_ws/install/ffw_bringup/share/ffw_bringup/config/ffw_bh5_rev1_follower
+[2.469s] creating /root/workspaces/ros2_ws/install/ffw_bringup/share/ffw_bringup/config/ffw_sg2_rev1_follower
+[2.470s] creating /root/workspaces/ros2_ws/install/ffw_bringup/share/ffw_bringup/config/ffw_lg2_leader
+[2.503s] creating /root/workspaces/ros2_ws/install/ffw_bringup/share/ffw_bringup/config/ffw_sh5_rev1_follower
+[2.517s] copying config/ffw_sh5_rev1_follower/ffw_sh5_follower_initial_positions.yaml -> /root/workspaces/ros2_ws/install/ffw_bringup/share/ffw_bringup/config/ffw_sh5_rev1_follower
+[2.537s] copying config/ffw_sh5_rev1_follower/ffw_sh5_follower_ai_hardware_controller.yaml -> /root/workspaces/ros2_ws/install/ffw_bringup/share/ffw_bringup/config/ffw_sh5_rev1_follower
+[2.537s] creating /root/workspaces/ros2_ws/install/ffw_bringup/share/ffw_bringup/config/common
+[2.537s] copying config/common/gz_bridge.yaml -> /root/workspaces/ros2_ws/install/ffw_bringup/share/ffw_bringup/config/common
+[2.561s] creating /root/workspaces/ros2_ws/install/ffw_bringup/share/ffw_bringup/worlds
+[2.585s] copying worlds/default.sdf -> /root/workspaces/ros2_ws/install/ffw_bringup/share/ffw_bringup/worlds
+[2.600s] copying worlds/empty_world.sdf -> /root/workspaces/ros2_ws/install/ffw_bringup/share/ffw_bringup/worlds
+[2.622s] running install_egg_info
+[2.656s] Copying ../../../build/ffw_bringup/ffw_bringup.egg-info to /root/workspaces/ros2_ws/install/ffw_bringup/lib/python3.12/site-packages/ffw_bringup-1.2.0-py3.12.egg-info
+[2.849s] running install_scripts
+[3.105s] Installing head_eef_tracker script to /root/workspaces/ros2_ws/install/ffw_bringup/lib/ffw_bringup
+[3.118s] Installing joint_trajectory_executor script to /root/workspaces/ros2_ws/install/ffw_bringup/lib/ffw_bringup
+[3.140s] writing list of installed files to '/root/workspaces/ros2_ws/build/ffw_bringup/install.log'
+[3.202s] Invoked command in '/root/workspaces/ros2_ws/src/ai-worker-sim/ffw_bringup' returned '0': AMENT_PREFIX_PATH=/root/workspaces/ros2_ws/install/ffw_description:${AMENT_PREFIX_PATH} CMAKE_PREFIX_PATH=/root/workspaces/ros2_ws/install/ffw_description:${CMAKE_PREFIX_PATH} PYTHONPATH=/root/workspaces/ros2_ws/build/ffw_bringup/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/root/workspaces/ros2_ws/install/ffw_bringup/lib/python3.12/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../../../build/ffw_bringup build --build-base /root/workspaces/ros2_ws/build/ffw_bringup/build install --record /root/workspaces/ros2_ws/build/ffw_bringup/install.log --install-scripts $base/lib/ffw_bringup --single-version-externally-managed install_data

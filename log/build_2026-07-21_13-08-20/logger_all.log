@@ -1,0 +1,615 @@
+[0.172s] DEBUG:colcon:Command line arguments: ['/usr/bin/colcon', 'build']
+[0.172s] DEBUG:colcon:Parsed command line arguments: Namespace(log_base=None, log_level=None, verb_name='build', build_base='build', install_base='install', merge_install=False, symlink_install=False, test_result_base=None, continue_on_error=False, executor='parallel', parallel_workers=4, event_handlers=None, ignore_user_meta=False, metas=['./colcon.meta'], base_paths=['.'], packages_ignore=None, packages_ignore_regex=None, paths=None, packages_up_to=None, packages_up_to_regex=None, packages_above=None, packages_above_and_dependencies=None, packages_above_depth=None, packages_select_by_dep=None, packages_skip_by_dep=None, packages_skip_up_to=None, packages_select_build_failed=False, packages_skip_build_finished=False, packages_select_test_failures=False, packages_skip_test_passed=False, packages_select=None, packages_skip=None, packages_select_regex=None, packages_skip_regex=None, packages_start=None, packages_end=None, allow_overriding=[], cmake_args=None, cmake_target=None, cmake_target_skip_unavailable=False, cmake_clean_cache=False, cmake_clean_first=False, cmake_force_configure=False, ament_cmake_args=None, catkin_cmake_args=None, catkin_skip_building_tests=False, verb_parser=<colcon_defaults.argument_parser.defaults.DefaultArgumentsDecorator object at 0x7fd5e2979340>, verb_extension=<colcon_core.verb.build.BuildVerb object at 0x7fd5e29791c0>, main=<bound method BuildVerb.main of <colcon_core.verb.build.BuildVerb object at 0x7fd5e29791c0>>)
+[0.233s] Level 1:colcon.colcon_core.package_discovery:discover_packages(colcon_meta) check parameters
+[0.236s] Level 1:colcon.colcon_core.package_discovery:discover_packages(recursive) check parameters
+[0.238s] Level 1:colcon.colcon_core.package_discovery:discover_packages(ignore) check parameters
+[0.244s] Level 1:colcon.colcon_core.package_discovery:discover_packages(path) check parameters
+[0.249s] Level 1:colcon.colcon_core.package_discovery:discover_packages(colcon_meta) discover
+[0.257s] Level 1:colcon.colcon_core.package_discovery:discover_packages(recursive) discover
+[0.262s] INFO:colcon.colcon_core.package_discovery:Crawling recursively for packages in '/root/workspaces/ros2_ws'
+[0.267s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extensions ['ignore', 'ignore_ament_install']
+[0.271s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extension 'ignore'
+[0.278s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extension 'ignore_ament_install'
+[0.284s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extensions ['colcon_pkg']
+[0.285s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extension 'colcon_pkg'
+[0.290s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extensions ['colcon_meta']
+[0.293s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extension 'colcon_meta'
+[0.298s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extensions ['ros']
+[0.302s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extension 'ros'
+[0.346s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extensions ['cmake', 'python']
+[0.346s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extension 'cmake'
+[0.349s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extension 'python'
+[0.354s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extensions ['python_setup_py']
+[0.358s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extension 'python_setup_py'
+[0.363s] Level 1:colcon.colcon_core.package_identification:_identify(build) by extensions ['ignore', 'ignore_ament_install']
+[0.367s] Level 1:colcon.colcon_core.package_identification:_identify(build) by extension 'ignore'
+[0.372s] Level 1:colcon.colcon_core.package_identification:_identify(build) ignored
+[0.380s] Level 1:colcon.colcon_core.package_identification:_identify(install) by extensions ['ignore', 'ignore_ament_install']
+[0.385s] Level 1:colcon.colcon_core.package_identification:_identify(install) by extension 'ignore'
+[0.389s] Level 1:colcon.colcon_core.package_identification:_identify(install) ignored
+[0.401s] Level 1:colcon.colcon_core.package_identification:_identify(log) by extensions ['ignore', 'ignore_ament_install']
+[0.401s] Level 1:colcon.colcon_core.package_identification:_identify(log) by extension 'ignore'
+[0.406s] Level 1:colcon.colcon_core.package_identification:_identify(log) ignored
+[0.411s] Level 1:colcon.colcon_core.package_identification:_identify(src) by extensions ['ignore', 'ignore_ament_install']
+[0.415s] Level 1:colcon.colcon_core.package_identification:_identify(src) by extension 'ignore'
+[0.422s] Level 1:colcon.colcon_core.package_identification:_identify(src) by extension 'ignore_ament_install'
+[0.428s] Level 1:colcon.colcon_core.package_identification:_identify(src) by extensions ['colcon_pkg']
+[0.429s] Level 1:colcon.colcon_core.package_identification:_identify(src) by extension 'colcon_pkg'
+[0.437s] Level 1:colcon.colcon_core.package_identification:_identify(src) by extensions ['colcon_meta']
+[0.440s] Level 1:colcon.colcon_core.package_identification:_identify(src) by extension 'colcon_meta'
+[0.444s] Level 1:colcon.colcon_core.package_identification:_identify(src) by extensions ['ros']
+[0.448s] Level 1:colcon.colcon_core.package_identification:_identify(src) by extension 'ros'
+[0.461s] Level 1:colcon.colcon_core.package_identification:_identify(src) by extensions ['cmake', 'python']
+[0.462s] Level 1:colcon.colcon_core.package_identification:_identify(src) by extension 'cmake'
+[0.469s] Level 1:colcon.colcon_core.package_identification:_identify(src) by extension 'python'
+[0.473s] Level 1:colcon.colcon_core.package_identification:_identify(src) by extensions ['python_setup_py']
+[0.476s] Level 1:colcon.colcon_core.package_identification:_identify(src) by extension 'python_setup_py'
+[0.482s] Level 1:colcon.colcon_core.package_identification:_identify(src/Gazebo_worlds) by extensions ['ignore', 'ignore_ament_install']
+[0.485s] Level 1:colcon.colcon_core.package_identification:_identify(src/Gazebo_worlds) by extension 'ignore'
+[0.492s] Level 1:colcon.colcon_core.package_identification:_identify(src/Gazebo_worlds) by extension 'ignore_ament_install'
+[0.500s] Level 1:colcon.colcon_core.package_identification:_identify(src/Gazebo_worlds) by extensions ['colcon_pkg']
+[0.500s] Level 1:colcon.colcon_core.package_identification:_identify(src/Gazebo_worlds) by extension 'colcon_pkg'
+[0.506s] Level 1:colcon.colcon_core.package_identification:_identify(src/Gazebo_worlds) by extensions ['colcon_meta']
+[0.509s] Level 1:colcon.colcon_core.package_identification:_identify(src/Gazebo_worlds) by extension 'colcon_meta'
+[0.513s] Level 1:colcon.colcon_core.package_identification:_identify(src/Gazebo_worlds) by extensions ['ros']
+[0.518s] Level 1:colcon.colcon_core.package_identification:_identify(src/Gazebo_worlds) by extension 'ros'
+[0.529s] Level 1:colcon.colcon_core.package_identification:_identify(src/Gazebo_worlds) by extensions ['cmake', 'python']
+[0.529s] Level 1:colcon.colcon_core.package_identification:_identify(src/Gazebo_worlds) by extension 'cmake'
+[0.536s] Level 1:colcon.colcon_core.package_identification:_identify(src/Gazebo_worlds) by extension 'python'
+[0.540s] Level 1:colcon.colcon_core.package_identification:_identify(src/Gazebo_worlds) by extensions ['python_setup_py']
+[0.543s] Level 1:colcon.colcon_core.package_identification:_identify(src/Gazebo_worlds) by extension 'python_setup_py'
+[0.549s] Level 1:colcon.colcon_core.package_identification:_identify(src/Gazebo_worlds/images) by extensions ['ignore', 'ignore_ament_install']
+[0.553s] Level 1:colcon.colcon_core.package_identification:_identify(src/Gazebo_worlds/images) by extension 'ignore'
+[0.566s] Level 1:colcon.colcon_core.package_identification:_identify(src/Gazebo_worlds/images) by extension 'ignore_ament_install'
+[0.572s] Level 1:colcon.colcon_core.package_identification:_identify(src/Gazebo_worlds/images) by extensions ['colcon_pkg']
+[0.573s] Level 1:colcon.colcon_core.package_identification:_identify(src/Gazebo_worlds/images) by extension 'colcon_pkg'
+[0.588s] Level 1:colcon.colcon_core.package_identification:_identify(src/Gazebo_worlds/images) by extensions ['colcon_meta']
+[0.592s] Level 1:colcon.colcon_core.package_identification:_identify(src/Gazebo_worlds/images) by extension 'colcon_meta'
+[0.597s] Level 1:colcon.colcon_core.package_identification:_identify(src/Gazebo_worlds/images) by extensions ['ros']
+[0.601s] Level 1:colcon.colcon_core.package_identification:_identify(src/Gazebo_worlds/images) by extension 'ros'
+[0.614s] Level 1:colcon.colcon_core.package_identification:_identify(src/Gazebo_worlds/images) by extensions ['cmake', 'python']
+[0.614s] Level 1:colcon.colcon_core.package_identification:_identify(src/Gazebo_worlds/images) by extension 'cmake'
+[0.620s] Level 1:colcon.colcon_core.package_identification:_identify(src/Gazebo_worlds/images) by extension 'python'
+[0.624s] Level 1:colcon.colcon_core.package_identification:_identify(src/Gazebo_worlds/images) by extensions ['python_setup_py']
+[0.626s] Level 1:colcon.colcon_core.package_identification:_identify(src/Gazebo_worlds/images) by extension 'python_setup_py'
+[0.632s] Level 1:colcon.colcon_core.package_identification:_identify(src/Gazebo_worlds/warehouse_worlds) by extensions ['ignore', 'ignore_ament_install']
+[0.636s] Level 1:colcon.colcon_core.package_identification:_identify(src/Gazebo_worlds/warehouse_worlds) by extension 'ignore'
+[0.643s] Level 1:colcon.colcon_core.package_identification:_identify(src/Gazebo_worlds/warehouse_worlds) by extension 'ignore_ament_install'
+[0.650s] Level 1:colcon.colcon_core.package_identification:_identify(src/Gazebo_worlds/warehouse_worlds) by extensions ['colcon_pkg']
+[0.650s] Level 1:colcon.colcon_core.package_identification:_identify(src/Gazebo_worlds/warehouse_worlds) by extension 'colcon_pkg'
+[0.657s] Level 1:colcon.colcon_core.package_identification:_identify(src/Gazebo_worlds/warehouse_worlds) by extensions ['colcon_meta']
+[0.659s] Level 1:colcon.colcon_core.package_identification:_identify(src/Gazebo_worlds/warehouse_worlds) by extension 'colcon_meta'
+[0.663s] Level 1:colcon.colcon_core.package_identification:_identify(src/Gazebo_worlds/warehouse_worlds) by extensions ['ros']
+[0.668s] Level 1:colcon.colcon_core.package_identification:_identify(src/Gazebo_worlds/warehouse_worlds) by extension 'ros'
+[0.683s] DEBUG:colcon.colcon_core.package_identification:Package 'src/Gazebo_worlds/warehouse_worlds' with type 'ros.ament_cmake' and name 'warehouse_worlds'
+[0.684s] Level 1:colcon.colcon_core.package_identification:_identify(src/ai-worker-sim) by extensions ['ignore', 'ignore_ament_install']
+[0.688s] Level 1:colcon.colcon_core.package_identification:_identify(src/ai-worker-sim) by extension 'ignore'
+[0.696s] Level 1:colcon.colcon_core.package_identification:_identify(src/ai-worker-sim) by extension 'ignore_ament_install'
+[0.702s] Level 1:colcon.colcon_core.package_identification:_identify(src/ai-worker-sim) by extensions ['colcon_pkg']
+[0.703s] Level 1:colcon.colcon_core.package_identification:_identify(src/ai-worker-sim) by extension 'colcon_pkg'
+[0.713s] Level 1:colcon.colcon_core.package_identification:_identify(src/ai-worker-sim) by extensions ['colcon_meta']
+[0.716s] Level 1:colcon.colcon_core.package_identification:_identify(src/ai-worker-sim) by extension 'colcon_meta'
+[0.721s] Level 1:colcon.colcon_core.package_identification:_identify(src/ai-worker-sim) by extensions ['ros']
+[0.729s] Level 1:colcon.colcon_core.package_identification:_identify(src/ai-worker-sim) by extension 'ros'
+[0.740s] Level 1:colcon.colcon_core.package_identification:_identify(src/ai-worker-sim) by extensions ['cmake', 'python']
+[0.740s] Level 1:colcon.colcon_core.package_identification:_identify(src/ai-worker-sim) by extension 'cmake'
+[0.748s] Level 1:colcon.colcon_core.package_identification:_identify(src/ai-worker-sim) by extension 'python'
+[0.753s] Level 1:colcon.colcon_core.package_identification:_identify(src/ai-worker-sim) by extensions ['python_setup_py']
+[0.755s] Level 1:colcon.colcon_core.package_identification:_identify(src/ai-worker-sim) by extension 'python_setup_py'
+[0.761s] Level 1:colcon.colcon_core.package_identification:_identify(src/ai-worker-sim/ffw_bringup) by extensions ['ignore', 'ignore_ament_install']
+[0.767s] Level 1:colcon.colcon_core.package_identification:_identify(src/ai-worker-sim/ffw_bringup) by extension 'ignore'
+[0.774s] Level 1:colcon.colcon_core.package_identification:_identify(src/ai-worker-sim/ffw_bringup) by extension 'ignore_ament_install'
+[0.781s] Level 1:colcon.colcon_core.package_identification:_identify(src/ai-worker-sim/ffw_bringup) by extensions ['colcon_pkg']
+[0.781s] Level 1:colcon.colcon_core.package_identification:_identify(src/ai-worker-sim/ffw_bringup) by extension 'colcon_pkg'
+[0.788s] Level 1:colcon.colcon_core.package_identification:_identify(src/ai-worker-sim/ffw_bringup) by extensions ['colcon_meta']
+[0.790s] Level 1:colcon.colcon_core.package_identification:_identify(src/ai-worker-sim/ffw_bringup) by extension 'colcon_meta'
+[0.795s] Level 1:colcon.colcon_core.package_identification:_identify(src/ai-worker-sim/ffw_bringup) by extensions ['ros']
+[0.801s] Level 1:colcon.colcon_core.package_identification:_identify(src/ai-worker-sim/ffw_bringup) by extension 'ros'
+[0.813s] DEBUG:colcon.colcon_core.package_identification:Package 'src/ai-worker-sim/ffw_bringup' with type 'ros.ament_python' and name 'ffw_bringup'
+[0.814s] Level 1:colcon.colcon_core.package_identification:_identify(src/ai-worker-sim/ffw_description) by extensions ['ignore', 'ignore_ament_install']
+[0.818s] Level 1:colcon.colcon_core.package_identification:_identify(src/ai-worker-sim/ffw_description) by extension 'ignore'
+[0.825s] Level 1:colcon.colcon_core.package_identification:_identify(src/ai-worker-sim/ffw_description) by extension 'ignore_ament_install'
+[0.831s] Level 1:colcon.colcon_core.package_identification:_identify(src/ai-worker-sim/ffw_description) by extensions ['colcon_pkg']
+[0.832s] Level 1:colcon.colcon_core.package_identification:_identify(src/ai-worker-sim/ffw_description) by extension 'colcon_pkg'
+[0.839s] Level 1:colcon.colcon_core.package_identification:_identify(src/ai-worker-sim/ffw_description) by extensions ['colcon_meta']
+[0.841s] Level 1:colcon.colcon_core.package_identification:_identify(src/ai-worker-sim/ffw_description) by extension 'colcon_meta'
+[0.846s] Level 1:colcon.colcon_core.package_identification:_identify(src/ai-worker-sim/ffw_description) by extensions ['ros']
+[0.850s] Level 1:colcon.colcon_core.package_identification:_identify(src/ai-worker-sim/ffw_description) by extension 'ros'
+[0.862s] DEBUG:colcon.colcon_core.package_identification:Package 'src/ai-worker-sim/ffw_description' with type 'ros.ament_cmake' and name 'ffw_description'
+[0.862s] Level 1:colcon.colcon_core.package_identification:_identify(src/ai-worker-sim/ffw_moveit_config) by extensions ['ignore', 'ignore_ament_install']
+[0.868s] Level 1:colcon.colcon_core.package_identification:_identify(src/ai-worker-sim/ffw_moveit_config) by extension 'ignore'
+[0.875s] Level 1:colcon.colcon_core.package_identification:_identify(src/ai-worker-sim/ffw_moveit_config) by extension 'ignore_ament_install'
+[0.882s] Level 1:colcon.colcon_core.package_identification:_identify(src/ai-worker-sim/ffw_moveit_config) by extensions ['colcon_pkg']
+[0.883s] Level 1:colcon.colcon_core.package_identification:_identify(src/ai-worker-sim/ffw_moveit_config) by extension 'colcon_pkg'
+[0.890s] Level 1:colcon.colcon_core.package_identification:_identify(src/ai-worker-sim/ffw_moveit_config) by extensions ['colcon_meta']
+[0.893s] Level 1:colcon.colcon_core.package_identification:_identify(src/ai-worker-sim/ffw_moveit_config) by extension 'colcon_meta'
+[0.897s] Level 1:colcon.colcon_core.package_identification:_identify(src/ai-worker-sim/ffw_moveit_config) by extensions ['ros']
+[0.902s] Level 1:colcon.colcon_core.package_identification:_identify(src/ai-worker-sim/ffw_moveit_config) by extension 'ros'
+[0.914s] DEBUG:colcon.colcon_core.package_identification:Package 'src/ai-worker-sim/ffw_moveit_config' with type 'ros.ament_cmake' and name 'ffw_moveit_config'
+[0.915s] Level 1:colcon.colcon_core.package_identification:_identify(src/ai-worker-sim/ffw_navigation) by extensions ['ignore', 'ignore_ament_install']
+[0.922s] Level 1:colcon.colcon_core.package_identification:_identify(src/ai-worker-sim/ffw_navigation) by extension 'ignore'
+[0.929s] Level 1:colcon.colcon_core.package_identification:_identify(src/ai-worker-sim/ffw_navigation) by extension 'ignore_ament_install'
+[0.936s] Level 1:colcon.colcon_core.package_identification:_identify(src/ai-worker-sim/ffw_navigation) by extensions ['colcon_pkg']
+[0.937s] Level 1:colcon.colcon_core.package_identification:_identify(src/ai-worker-sim/ffw_navigation) by extension 'colcon_pkg'
+[0.944s] Level 1:colcon.colcon_core.package_identification:_identify(src/ai-worker-sim/ffw_navigation) by extensions ['colcon_meta']
+[0.947s] Level 1:colcon.colcon_core.package_identification:_identify(src/ai-worker-sim/ffw_navigation) by extension 'colcon_meta'
+[0.952s] Level 1:colcon.colcon_core.package_identification:_identify(src/ai-worker-sim/ffw_navigation) by extensions ['ros']
+[0.957s] Level 1:colcon.colcon_core.package_identification:_identify(src/ai-worker-sim/ffw_navigation) by extension 'ros'
+[0.970s] DEBUG:colcon.colcon_core.package_identification:Package 'src/ai-worker-sim/ffw_navigation' with type 'ros.ament_cmake' and name 'ffw_navigation'
+[0.970s] Level 1:colcon.colcon_core.package_identification:_identify(src/ai-worker-sim/ffw_swerve_drive_controller) by extensions ['ignore', 'ignore_ament_install']
+[0.975s] Level 1:colcon.colcon_core.package_identification:_identify(src/ai-worker-sim/ffw_swerve_drive_controller) by extension 'ignore'
+[0.983s] Level 1:colcon.colcon_core.package_identification:_identify(src/ai-worker-sim/ffw_swerve_drive_controller) by extension 'ignore_ament_install'
+[0.989s] Level 1:colcon.colcon_core.package_identification:_identify(src/ai-worker-sim/ffw_swerve_drive_controller) by extensions ['colcon_pkg']
+[0.990s] Level 1:colcon.colcon_core.package_identification:_identify(src/ai-worker-sim/ffw_swerve_drive_controller) by extension 'colcon_pkg'
+[0.998s] Level 1:colcon.colcon_core.package_identification:_identify(src/ai-worker-sim/ffw_swerve_drive_controller) by extensions ['colcon_meta']
+[1.001s] Level 1:colcon.colcon_core.package_identification:_identify(src/ai-worker-sim/ffw_swerve_drive_controller) by extension 'colcon_meta'
+[1.006s] Level 1:colcon.colcon_core.package_identification:_identify(src/ai-worker-sim/ffw_swerve_drive_controller) by extensions ['ros']
+[1.011s] Level 1:colcon.colcon_core.package_identification:_identify(src/ai-worker-sim/ffw_swerve_drive_controller) by extension 'ros'
+[1.025s] DEBUG:colcon.colcon_core.package_identification:Package 'src/ai-worker-sim/ffw_swerve_drive_controller' with type 'ros.ament_cmake' and name 'ffw_swerve_drive_controller'
+[1.025s] Level 1:colcon.colcon_core.package_identification:_identify(src/ai-worker-sim/ffw_teleop) by extensions ['ignore', 'ignore_ament_install']
+[1.029s] Level 1:colcon.colcon_core.package_identification:_identify(src/ai-worker-sim/ffw_teleop) by extension 'ignore'
+[1.038s] Level 1:colcon.colcon_core.package_identification:_identify(src/ai-worker-sim/ffw_teleop) by extension 'ignore_ament_install'
+[1.045s] Level 1:colcon.colcon_core.package_identification:_identify(src/ai-worker-sim/ffw_teleop) by extensions ['colcon_pkg']
+[1.046s] Level 1:colcon.colcon_core.package_identification:_identify(src/ai-worker-sim/ffw_teleop) by extension 'colcon_pkg'
+[1.053s] Level 1:colcon.colcon_core.package_identification:_identify(src/ai-worker-sim/ffw_teleop) by extensions ['colcon_meta']
+[1.056s] Level 1:colcon.colcon_core.package_identification:_identify(src/ai-worker-sim/ffw_teleop) by extension 'colcon_meta'
+[1.061s] Level 1:colcon.colcon_core.package_identification:_identify(src/ai-worker-sim/ffw_teleop) by extensions ['ros']
+[1.066s] Level 1:colcon.colcon_core.package_identification:_identify(src/ai-worker-sim/ffw_teleop) by extension 'ros'
+[1.078s] DEBUG:colcon.colcon_core.package_identification:Package 'src/ai-worker-sim/ffw_teleop' with type 'ros.ament_python' and name 'ffw_teleop'
+[1.079s] Level 1:colcon.colcon_core.package_identification:_identify(src/ai-worker-sim/library_world) by extensions ['ignore', 'ignore_ament_install']
+[1.083s] Level 1:colcon.colcon_core.package_identification:_identify(src/ai-worker-sim/library_world) by extension 'ignore'
+[1.090s] Level 1:colcon.colcon_core.package_identification:_identify(src/ai-worker-sim/library_world) by extension 'ignore_ament_install'
+[1.097s] Level 1:colcon.colcon_core.package_identification:_identify(src/ai-worker-sim/library_world) by extensions ['colcon_pkg']
+[1.098s] Level 1:colcon.colcon_core.package_identification:_identify(src/ai-worker-sim/library_world) by extension 'colcon_pkg'
+[1.105s] Level 1:colcon.colcon_core.package_identification:_identify(src/ai-worker-sim/library_world) by extensions ['colcon_meta']
+[1.108s] Level 1:colcon.colcon_core.package_identification:_identify(src/ai-worker-sim/library_world) by extension 'colcon_meta'
+[1.117s] Level 1:colcon.colcon_core.package_identification:_identify(src/ai-worker-sim/library_world) by extensions ['ros']
+[1.125s] Level 1:colcon.colcon_core.package_identification:_identify(src/ai-worker-sim/library_world) by extension 'ros'
+[1.136s] DEBUG:colcon.colcon_core.package_identification:Package 'src/ai-worker-sim/library_world' with type 'ros.ament_cmake' and name 'library_world'
+[1.137s] Level 1:colcon.colcon_core.package_discovery:discover_packages(recursive) using defaults
+[1.141s] Level 1:colcon.colcon_core.package_discovery:discover_packages(ignore) discover
+[1.147s] Level 1:colcon.colcon_core.package_discovery:discover_packages(ignore) using defaults
+[1.152s] Level 1:colcon.colcon_core.package_discovery:discover_packages(path) discover
+[1.156s] Level 1:colcon.colcon_core.package_discovery:discover_packages(path) using defaults
+[1.189s] Level 1:colcon.colcon_core.package_discovery:discover_packages(prefix_path) check parameters
+[1.189s] Level 1:colcon.colcon_core.package_discovery:discover_packages(prefix_path) discover
+[1.213s] DEBUG:colcon.colcon_installed_package_information.package_discovery:Found 3 installed packages in /root/workspaces/turtlebot_ws/install
+[1.216s] DEBUG:colcon.colcon_installed_package_information.package_discovery:Found 453 installed packages in /opt/ros/jazzy
+[1.221s] Level 1:colcon.colcon_core.package_discovery:discover_packages(prefix_path) using defaults
+[1.302s] Level 5:colcon.colcon_core.verb:set package 'ffw_description' build argument 'cmake_args' from command line to 'None'
+[1.303s] Level 5:colcon.colcon_core.verb:set package 'ffw_description' build argument 'cmake_target' from command line to 'None'
+[1.303s] Level 5:colcon.colcon_core.verb:set package 'ffw_description' build argument 'cmake_target_skip_unavailable' from command line to 'False'
+[1.308s] Level 5:colcon.colcon_core.verb:set package 'ffw_description' build argument 'cmake_clean_cache' from command line to 'False'
+[1.313s] Level 5:colcon.colcon_core.verb:set package 'ffw_description' build argument 'cmake_clean_first' from command line to 'False'
+[1.318s] Level 5:colcon.colcon_core.verb:set package 'ffw_description' build argument 'cmake_force_configure' from command line to 'False'
+[1.323s] Level 5:colcon.colcon_core.verb:set package 'ffw_description' build argument 'ament_cmake_args' from command line to 'None'
+[1.328s] Level 5:colcon.colcon_core.verb:set package 'ffw_description' build argument 'catkin_cmake_args' from command line to 'None'
+[1.333s] Level 5:colcon.colcon_core.verb:set package 'ffw_description' build argument 'catkin_skip_building_tests' from command line to 'False'
+[1.338s] DEBUG:colcon.colcon_core.verb:Building package 'ffw_description' with the following arguments: {'ament_cmake_args': None, 'build_base': '/root/workspaces/ros2_ws/build/ffw_description', 'catkin_cmake_args': None, 'catkin_skip_building_tests': False, 'cmake_args': None, 'cmake_clean_cache': False, 'cmake_clean_first': False, 'cmake_force_configure': False, 'cmake_target': None, 'cmake_target_skip_unavailable': False, 'install_base': '/root/workspaces/ros2_ws/install/ffw_description', 'merge_install': False, 'path': '/root/workspaces/ros2_ws/src/ai-worker-sim/ffw_description', 'symlink_install': False, 'test_result_base': None}
+[1.343s] Level 5:colcon.colcon_core.verb:set package 'ffw_moveit_config' build argument 'cmake_args' from command line to 'None'
+[1.347s] Level 5:colcon.colcon_core.verb:set package 'ffw_moveit_config' build argument 'cmake_target' from command line to 'None'
+[1.352s] Level 5:colcon.colcon_core.verb:set package 'ffw_moveit_config' build argument 'cmake_target_skip_unavailable' from command line to 'False'
+[1.358s] Level 5:colcon.colcon_core.verb:set package 'ffw_moveit_config' build argument 'cmake_clean_cache' from command line to 'False'
+[1.362s] Level 5:colcon.colcon_core.verb:set package 'ffw_moveit_config' build argument 'cmake_clean_first' from command line to 'False'
+[1.367s] Level 5:colcon.colcon_core.verb:set package 'ffw_moveit_config' build argument 'cmake_force_configure' from command line to 'False'
+[1.372s] Level 5:colcon.colcon_core.verb:set package 'ffw_moveit_config' build argument 'ament_cmake_args' from command line to 'None'
+[1.377s] Level 5:colcon.colcon_core.verb:set package 'ffw_moveit_config' build argument 'catkin_cmake_args' from command line to 'None'
+[1.382s] Level 5:colcon.colcon_core.verb:set package 'ffw_moveit_config' build argument 'catkin_skip_building_tests' from command line to 'False'
+[1.387s] DEBUG:colcon.colcon_core.verb:Building package 'ffw_moveit_config' with the following arguments: {'ament_cmake_args': None, 'build_base': '/root/workspaces/ros2_ws/build/ffw_moveit_config', 'catkin_cmake_args': None, 'catkin_skip_building_tests': False, 'cmake_args': None, 'cmake_clean_cache': False, 'cmake_clean_first': False, 'cmake_force_configure': False, 'cmake_target': None, 'cmake_target_skip_unavailable': False, 'install_base': '/root/workspaces/ros2_ws/install/ffw_moveit_config', 'merge_install': False, 'path': '/root/workspaces/ros2_ws/src/ai-worker-sim/ffw_moveit_config', 'symlink_install': False, 'test_result_base': None}
+[1.392s] Level 5:colcon.colcon_core.verb:set package 'ffw_navigation' build argument 'cmake_args' from command line to 'None'
+[1.397s] Level 5:colcon.colcon_core.verb:set package 'ffw_navigation' build argument 'cmake_target' from command line to 'None'
+[1.402s] Level 5:colcon.colcon_core.verb:set package 'ffw_navigation' build argument 'cmake_target_skip_unavailable' from command line to 'False'
+[1.407s] Level 5:colcon.colcon_core.verb:set package 'ffw_navigation' build argument 'cmake_clean_cache' from command line to 'False'
+[1.412s] Level 5:colcon.colcon_core.verb:set package 'ffw_navigation' build argument 'cmake_clean_first' from command line to 'False'
+[1.417s] Level 5:colcon.colcon_core.verb:set package 'ffw_navigation' build argument 'cmake_force_configure' from command line to 'False'
+[1.422s] Level 5:colcon.colcon_core.verb:set package 'ffw_navigation' build argument 'ament_cmake_args' from command line to 'None'
+[1.426s] Level 5:colcon.colcon_core.verb:set package 'ffw_navigation' build argument 'catkin_cmake_args' from command line to 'None'
+[1.431s] Level 5:colcon.colcon_core.verb:set package 'ffw_navigation' build argument 'catkin_skip_building_tests' from command line to 'False'
+[1.436s] DEBUG:colcon.colcon_core.verb:Building package 'ffw_navigation' with the following arguments: {'ament_cmake_args': None, 'build_base': '/root/workspaces/ros2_ws/build/ffw_navigation', 'catkin_cmake_args': None, 'catkin_skip_building_tests': False, 'cmake_args': None, 'cmake_clean_cache': False, 'cmake_clean_first': False, 'cmake_force_configure': False, 'cmake_target': None, 'cmake_target_skip_unavailable': False, 'install_base': '/root/workspaces/ros2_ws/install/ffw_navigation', 'merge_install': False, 'path': '/root/workspaces/ros2_ws/src/ai-worker-sim/ffw_navigation', 'symlink_install': False, 'test_result_base': None}
+[1.441s] Level 5:colcon.colcon_core.verb:set package 'ffw_swerve_drive_controller' build argument 'cmake_args' from command line to 'None'
+[1.446s] Level 5:colcon.colcon_core.verb:set package 'ffw_swerve_drive_controller' build argument 'cmake_target' from command line to 'None'
+[1.450s] Level 5:colcon.colcon_core.verb:set package 'ffw_swerve_drive_controller' build argument 'cmake_target_skip_unavailable' from command line to 'False'
+[1.464s] Level 5:colcon.colcon_core.verb:set package 'ffw_swerve_drive_controller' build argument 'cmake_clean_cache' from command line to 'False'
+[1.469s] Level 5:colcon.colcon_core.verb:set package 'ffw_swerve_drive_controller' build argument 'cmake_clean_first' from command line to 'False'
+[1.474s] Level 5:colcon.colcon_core.verb:set package 'ffw_swerve_drive_controller' build argument 'cmake_force_configure' from command line to 'False'
+[1.479s] Level 5:colcon.colcon_core.verb:set package 'ffw_swerve_drive_controller' build argument 'ament_cmake_args' from command line to 'None'
+[1.484s] Level 5:colcon.colcon_core.verb:set package 'ffw_swerve_drive_controller' build argument 'catkin_cmake_args' from command line to 'None'
+[1.489s] Level 5:colcon.colcon_core.verb:set package 'ffw_swerve_drive_controller' build argument 'catkin_skip_building_tests' from command line to 'False'
+[1.493s] DEBUG:colcon.colcon_core.verb:Building package 'ffw_swerve_drive_controller' with the following arguments: {'ament_cmake_args': None, 'build_base': '/root/workspaces/ros2_ws/build/ffw_swerve_drive_controller', 'catkin_cmake_args': None, 'catkin_skip_building_tests': False, 'cmake_args': None, 'cmake_clean_cache': False, 'cmake_clean_first': False, 'cmake_force_configure': False, 'cmake_target': None, 'cmake_target_skip_unavailable': False, 'install_base': '/root/workspaces/ros2_ws/install/ffw_swerve_drive_controller', 'merge_install': False, 'path': '/root/workspaces/ros2_ws/src/ai-worker-sim/ffw_swerve_drive_controller', 'symlink_install': False, 'test_result_base': None}
+[1.499s] Level 5:colcon.colcon_core.verb:set package 'ffw_teleop' build argument 'cmake_args' from command line to 'None'
+[1.506s] Level 5:colcon.colcon_core.verb:set package 'ffw_teleop' build argument 'cmake_target' from command line to 'None'
+[1.511s] Level 5:colcon.colcon_core.verb:set package 'ffw_teleop' build argument 'cmake_target_skip_unavailable' from command line to 'False'
+[1.517s] Level 5:colcon.colcon_core.verb:set package 'ffw_teleop' build argument 'cmake_clean_cache' from command line to 'False'
+[1.523s] Level 5:colcon.colcon_core.verb:set package 'ffw_teleop' build argument 'cmake_clean_first' from command line to 'False'
+[1.528s] Level 5:colcon.colcon_core.verb:set package 'ffw_teleop' build argument 'cmake_force_configure' from command line to 'False'
+[1.533s] Level 5:colcon.colcon_core.verb:set package 'ffw_teleop' build argument 'ament_cmake_args' from command line to 'None'
+[1.539s] Level 5:colcon.colcon_core.verb:set package 'ffw_teleop' build argument 'catkin_cmake_args' from command line to 'None'
+[1.544s] Level 5:colcon.colcon_core.verb:set package 'ffw_teleop' build argument 'catkin_skip_building_tests' from command line to 'False'
+[1.549s] DEBUG:colcon.colcon_core.verb:Building package 'ffw_teleop' with the following arguments: {'ament_cmake_args': None, 'build_base': '/root/workspaces/ros2_ws/build/ffw_teleop', 'catkin_cmake_args': None, 'catkin_skip_building_tests': False, 'cmake_args': None, 'cmake_clean_cache': False, 'cmake_clean_first': False, 'cmake_force_configure': False, 'cmake_target': None, 'cmake_target_skip_unavailable': False, 'install_base': '/root/workspaces/ros2_ws/install/ffw_teleop', 'merge_install': False, 'path': '/root/workspaces/ros2_ws/src/ai-worker-sim/ffw_teleop', 'symlink_install': False, 'test_result_base': None}
+[1.554s] Level 5:colcon.colcon_core.verb:set package 'library_world' build argument 'cmake_args' from command line to 'None'
+[1.560s] Level 5:colcon.colcon_core.verb:set package 'library_world' build argument 'cmake_target' from command line to 'None'
+[1.564s] Level 5:colcon.colcon_core.verb:set package 'library_world' build argument 'cmake_target_skip_unavailable' from command line to 'False'
+[1.569s] Level 5:colcon.colcon_core.verb:set package 'library_world' build argument 'cmake_clean_cache' from command line to 'False'
+[1.574s] Level 5:colcon.colcon_core.verb:set package 'library_world' build argument 'cmake_clean_first' from command line to 'False'
+[1.580s] Level 5:colcon.colcon_core.verb:set package 'library_world' build argument 'cmake_force_configure' from command line to 'False'
+[1.586s] Level 5:colcon.colcon_core.verb:set package 'library_world' build argument 'ament_cmake_args' from command line to 'None'
+[1.590s] Level 5:colcon.colcon_core.verb:set package 'library_world' build argument 'catkin_cmake_args' from command line to 'None'
+[1.596s] Level 5:colcon.colcon_core.verb:set package 'library_world' build argument 'catkin_skip_building_tests' from command line to 'False'
+[1.601s] DEBUG:colcon.colcon_core.verb:Building package 'library_world' with the following arguments: {'ament_cmake_args': None, 'build_base': '/root/workspaces/ros2_ws/build/library_world', 'catkin_cmake_args': None, 'catkin_skip_building_tests': False, 'cmake_args': None, 'cmake_clean_cache': False, 'cmake_clean_first': False, 'cmake_force_configure': False, 'cmake_target': None, 'cmake_target_skip_unavailable': False, 'install_base': '/root/workspaces/ros2_ws/install/library_world', 'merge_install': False, 'path': '/root/workspaces/ros2_ws/src/ai-worker-sim/library_world', 'symlink_install': False, 'test_result_base': None}
+[1.610s] Level 5:colcon.colcon_core.verb:set package 'warehouse_worlds' build argument 'cmake_args' from command line to 'None'
+[1.614s] Level 5:colcon.colcon_core.verb:set package 'warehouse_worlds' build argument 'cmake_target' from command line to 'None'
+[1.619s] Level 5:colcon.colcon_core.verb:set package 'warehouse_worlds' build argument 'cmake_target_skip_unavailable' from command line to 'False'
+[1.623s] Level 5:colcon.colcon_core.verb:set package 'warehouse_worlds' build argument 'cmake_clean_cache' from command line to 'False'
+[1.628s] Level 5:colcon.colcon_core.verb:set package 'warehouse_worlds' build argument 'cmake_clean_first' from command line to 'False'
+[1.633s] Level 5:colcon.colcon_core.verb:set package 'warehouse_worlds' build argument 'cmake_force_configure' from command line to 'False'
+[1.638s] Level 5:colcon.colcon_core.verb:set package 'warehouse_worlds' build argument 'ament_cmake_args' from command line to 'None'
+[1.643s] Level 5:colcon.colcon_core.verb:set package 'warehouse_worlds' build argument 'catkin_cmake_args' from command line to 'None'
+[1.648s] Level 5:colcon.colcon_core.verb:set package 'warehouse_worlds' build argument 'catkin_skip_building_tests' from command line to 'False'
+[1.653s] DEBUG:colcon.colcon_core.verb:Building package 'warehouse_worlds' with the following arguments: {'ament_cmake_args': None, 'build_base': '/root/workspaces/ros2_ws/build/warehouse_worlds', 'catkin_cmake_args': None, 'catkin_skip_building_tests': False, 'cmake_args': None, 'cmake_clean_cache': False, 'cmake_clean_first': False, 'cmake_force_configure': False, 'cmake_target': None, 'cmake_target_skip_unavailable': False, 'install_base': '/root/workspaces/ros2_ws/install/warehouse_worlds', 'merge_install': False, 'path': '/root/workspaces/ros2_ws/src/Gazebo_worlds/warehouse_worlds', 'symlink_install': False, 'test_result_base': None}
+[1.658s] Level 5:colcon.colcon_core.verb:set package 'ffw_bringup' build argument 'cmake_args' from command line to 'None'
+[1.663s] Level 5:colcon.colcon_core.verb:set package 'ffw_bringup' build argument 'cmake_target' from command line to 'None'
+[1.668s] Level 5:colcon.colcon_core.verb:set package 'ffw_bringup' build argument 'cmake_target_skip_unavailable' from command line to 'False'
+[1.673s] Level 5:colcon.colcon_core.verb:set package 'ffw_bringup' build argument 'cmake_clean_cache' from command line to 'False'
+[1.681s] Level 5:colcon.colcon_core.verb:set package 'ffw_bringup' build argument 'cmake_clean_first' from command line to 'False'
+[1.686s] Level 5:colcon.colcon_core.verb:set package 'ffw_bringup' build argument 'cmake_force_configure' from command line to 'False'
+[1.691s] Level 5:colcon.colcon_core.verb:set package 'ffw_bringup' build argument 'ament_cmake_args' from command line to 'None'
+[1.696s] Level 5:colcon.colcon_core.verb:set package 'ffw_bringup' build argument 'catkin_cmake_args' from command line to 'None'
+[1.701s] Level 5:colcon.colcon_core.verb:set package 'ffw_bringup' build argument 'catkin_skip_building_tests' from command line to 'False'
+[1.706s] DEBUG:colcon.colcon_core.verb:Building package 'ffw_bringup' with the following arguments: {'ament_cmake_args': None, 'build_base': '/root/workspaces/ros2_ws/build/ffw_bringup', 'catkin_cmake_args': None, 'catkin_skip_building_tests': False, 'cmake_args': None, 'cmake_clean_cache': False, 'cmake_clean_first': False, 'cmake_force_configure': False, 'cmake_target': None, 'cmake_target_skip_unavailable': False, 'install_base': '/root/workspaces/ros2_ws/install/ffw_bringup', 'merge_install': False, 'path': '/root/workspaces/ros2_ws/src/ai-worker-sim/ffw_bringup', 'symlink_install': False, 'test_result_base': None}
+[1.711s] INFO:colcon.colcon_core.executor:Executing jobs using 'parallel' executor
+[1.717s] DEBUG:colcon.colcon_parallel_executor.executor.parallel:run_until_complete
+[1.721s] INFO:colcon.colcon_ros.task.ament_cmake.build:Building ROS package in '/root/workspaces/ros2_ws/src/ai-worker-sim/ffw_description' with build type 'ament_cmake'
+[1.727s] INFO:colcon.colcon_cmake.task.cmake.build:Building CMake package in '/root/workspaces/ros2_ws/src/ai-worker-sim/ffw_description'
+[1.729s] INFO:colcon.colcon_core.plugin_system:Skipping extension 'colcon_core.shell.bat': Not used on non-Windows systems
+[1.729s] INFO:colcon.colcon_core.shell:Skip shell extension 'powershell' for command environment: Not usable outside of PowerShell
+[1.729s] DEBUG:colcon.colcon_core.shell:Skip shell extension 'dsv' for command environment
+[1.761s] INFO:colcon.colcon_ros.task.ament_cmake.build:Building ROS package in '/root/workspaces/ros2_ws/src/ai-worker-sim/ffw_moveit_config' with build type 'ament_cmake'
+[1.761s] INFO:colcon.colcon_cmake.task.cmake.build:Building CMake package in '/root/workspaces/ros2_ws/src/ai-worker-sim/ffw_moveit_config'
+[1.767s] INFO:colcon.colcon_core.shell:Skip shell extension 'powershell' for command environment: Not usable outside of PowerShell
+[1.767s] DEBUG:colcon.colcon_core.shell:Skip shell extension 'dsv' for command environment
+[1.797s] INFO:colcon.colcon_ros.task.ament_cmake.build:Building ROS package in '/root/workspaces/ros2_ws/src/ai-worker-sim/ffw_navigation' with build type 'ament_cmake'
+[1.797s] INFO:colcon.colcon_cmake.task.cmake.build:Building CMake package in '/root/workspaces/ros2_ws/src/ai-worker-sim/ffw_navigation'
+[1.804s] INFO:colcon.colcon_core.shell:Skip shell extension 'powershell' for command environment: Not usable outside of PowerShell
+[1.804s] DEBUG:colcon.colcon_core.shell:Skip shell extension 'dsv' for command environment
+[1.853s] INFO:colcon.colcon_ros.task.ament_cmake.build:Building ROS package in '/root/workspaces/ros2_ws/src/ai-worker-sim/ffw_swerve_drive_controller' with build type 'ament_cmake'
+[1.853s] INFO:colcon.colcon_cmake.task.cmake.build:Building CMake package in '/root/workspaces/ros2_ws/src/ai-worker-sim/ffw_swerve_drive_controller'
+[1.860s] INFO:colcon.colcon_core.shell:Skip shell extension 'powershell' for command environment: Not usable outside of PowerShell
+[1.860s] DEBUG:colcon.colcon_core.shell:Skip shell extension 'dsv' for command environment
+[2.013s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoking command in '/root/workspaces/ros2_ws/build/ffw_description': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/jazzy /usr/bin/cmake --build /root/workspaces/ros2_ws/build/ffw_description -- -j4 -l4
+[2.063s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoking command in '/root/workspaces/ros2_ws/build/ffw_moveit_config': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/jazzy /usr/bin/cmake --build /root/workspaces/ros2_ws/build/ffw_moveit_config -- -j4 -l4
+[2.123s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoking command in '/root/workspaces/ros2_ws/build/ffw_navigation': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/jazzy /usr/bin/cmake --build /root/workspaces/ros2_ws/build/ffw_navigation -- -j4 -l4
+[2.175s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoking command in '/root/workspaces/ros2_ws/build/ffw_swerve_drive_controller': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/jazzy /usr/bin/cmake --build /root/workspaces/ros2_ws/build/ffw_swerve_drive_controller -- -j4 -l4
+[2.175s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoked command in '/root/workspaces/ros2_ws/build/ffw_description' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/jazzy /usr/bin/cmake --build /root/workspaces/ros2_ws/build/ffw_description -- -j4 -l4
+[2.176s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoking command in '/root/workspaces/ros2_ws/build/ffw_description': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/jazzy /usr/bin/cmake --install /root/workspaces/ros2_ws/build/ffw_description
+[2.176s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoked command in '/root/workspaces/ros2_ws/build/ffw_moveit_config' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/jazzy /usr/bin/cmake --build /root/workspaces/ros2_ws/build/ffw_moveit_config -- -j4 -l4
+[2.176s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoking command in '/root/workspaces/ros2_ws/build/ffw_moveit_config': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/jazzy /usr/bin/cmake --install /root/workspaces/ros2_ws/build/ffw_moveit_config
+[2.329s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoked command in '/root/workspaces/ros2_ws/build/ffw_navigation' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/jazzy /usr/bin/cmake --build /root/workspaces/ros2_ws/build/ffw_navigation -- -j4 -l4
+[2.352s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoking command in '/root/workspaces/ros2_ws/build/ffw_navigation': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/jazzy /usr/bin/cmake --install /root/workspaces/ros2_ws/build/ffw_navigation
+[2.394s] Level 1:colcon.colcon_core.environment:create_environment_scripts_only(ffw_moveit_config)
+[2.399s] Level 1:colcon.colcon_core.environment:checking '/root/workspaces/ros2_ws/install/ffw_moveit_config' for CMake module files
+[2.415s] Level 1:colcon.colcon_core.environment:checking '/root/workspaces/ros2_ws/install/ffw_moveit_config' for CMake config files
+[2.427s] Level 1:colcon.colcon_core.shell:create_environment_hook('ffw_moveit_config', 'cmake_prefix_path')
+[2.427s] INFO:colcon.colcon_core.shell:Creating environment hook '/root/workspaces/ros2_ws/install/ffw_moveit_config/share/ffw_moveit_config/hook/cmake_prefix_path.ps1'
+[2.437s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoked command in '/root/workspaces/ros2_ws/build/ffw_moveit_config' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/jazzy /usr/bin/cmake --install /root/workspaces/ros2_ws/build/ffw_moveit_config
+[2.444s] INFO:colcon.colcon_core.shell:Creating environment descriptor '/root/workspaces/ros2_ws/install/ffw_moveit_config/share/ffw_moveit_config/hook/cmake_prefix_path.dsv'
+[2.460s] INFO:colcon.colcon_core.shell:Creating environment hook '/root/workspaces/ros2_ws/install/ffw_moveit_config/share/ffw_moveit_config/hook/cmake_prefix_path.sh'
+[2.478s] Level 1:colcon.colcon_core.environment:checking '/root/workspaces/ros2_ws/install/ffw_moveit_config/bin'
+[2.480s] Level 1:colcon.colcon_core.environment:checking '/root/workspaces/ros2_ws/install/ffw_moveit_config/lib/pkgconfig/ffw_moveit_config.pc'
+[2.480s] Level 1:colcon.colcon_core.environment:checking '/root/workspaces/ros2_ws/install/ffw_moveit_config/lib/python3.12/site-packages'
+[2.480s] Level 1:colcon.colcon_core.environment:checking '/root/workspaces/ros2_ws/install/ffw_moveit_config/bin'
+[2.481s] INFO:colcon.colcon_core.shell:Creating package script '/root/workspaces/ros2_ws/install/ffw_moveit_config/share/ffw_moveit_config/package.ps1'
+[2.497s] INFO:colcon.colcon_core.shell:Creating package descriptor '/root/workspaces/ros2_ws/install/ffw_moveit_config/share/ffw_moveit_config/package.dsv'
+[2.511s] INFO:colcon.colcon_core.shell:Creating package script '/root/workspaces/ros2_ws/install/ffw_moveit_config/share/ffw_moveit_config/package.sh'
+[2.527s] INFO:colcon.colcon_core.shell:Creating package script '/root/workspaces/ros2_ws/install/ffw_moveit_config/share/ffw_moveit_config/package.bash'
+[2.542s] INFO:colcon.colcon_core.shell:Creating package script '/root/workspaces/ros2_ws/install/ffw_moveit_config/share/ffw_moveit_config/package.zsh'
+[2.557s] Level 1:colcon.colcon_core.environment:create_file_with_runtime_dependencies(/root/workspaces/ros2_ws/install/ffw_moveit_config/share/colcon-core/packages/ffw_moveit_config)
+[2.577s] Level 1:colcon.colcon_core.environment:create_environment_scripts_only(ffw_moveit_config)
+[2.577s] Level 1:colcon.colcon_core.environment:checking '/root/workspaces/ros2_ws/install/ffw_moveit_config' for CMake module files
+[2.580s] Level 1:colcon.colcon_core.environment:checking '/root/workspaces/ros2_ws/install/ffw_moveit_config' for CMake config files
+[2.588s] Level 1:colcon.colcon_core.shell:create_environment_hook('ffw_moveit_config', 'cmake_prefix_path')
+[2.588s] INFO:colcon.colcon_core.shell:Creating environment hook '/root/workspaces/ros2_ws/install/ffw_moveit_config/share/ffw_moveit_config/hook/cmake_prefix_path.ps1'
+[2.603s] INFO:colcon.colcon_core.shell:Creating environment descriptor '/root/workspaces/ros2_ws/install/ffw_moveit_config/share/ffw_moveit_config/hook/cmake_prefix_path.dsv'
+[2.618s] INFO:colcon.colcon_core.shell:Creating environment hook '/root/workspaces/ros2_ws/install/ffw_moveit_config/share/ffw_moveit_config/hook/cmake_prefix_path.sh'
+[2.634s] Level 1:colcon.colcon_core.environment:checking '/root/workspaces/ros2_ws/install/ffw_moveit_config/bin'
+[2.634s] Level 1:colcon.colcon_core.environment:checking '/root/workspaces/ros2_ws/install/ffw_moveit_config/lib/pkgconfig/ffw_moveit_config.pc'
+[2.635s] Level 1:colcon.colcon_core.environment:checking '/root/workspaces/ros2_ws/install/ffw_moveit_config/lib/python3.12/site-packages'
+[2.635s] Level 1:colcon.colcon_core.environment:checking '/root/workspaces/ros2_ws/install/ffw_moveit_config/bin'
+[2.635s] INFO:colcon.colcon_core.shell:Creating package script '/root/workspaces/ros2_ws/install/ffw_moveit_config/share/ffw_moveit_config/package.ps1'
+[2.651s] INFO:colcon.colcon_core.shell:Creating package descriptor '/root/workspaces/ros2_ws/install/ffw_moveit_config/share/ffw_moveit_config/package.dsv'
+[2.669s] INFO:colcon.colcon_core.shell:Creating package script '/root/workspaces/ros2_ws/install/ffw_moveit_config/share/ffw_moveit_config/package.sh'
+[2.684s] INFO:colcon.colcon_core.shell:Creating package script '/root/workspaces/ros2_ws/install/ffw_moveit_config/share/ffw_moveit_config/package.bash'
+[2.699s] INFO:colcon.colcon_core.shell:Creating package script '/root/workspaces/ros2_ws/install/ffw_moveit_config/share/ffw_moveit_config/package.zsh'
+[2.714s] Level 1:colcon.colcon_core.environment:create_file_with_runtime_dependencies(/root/workspaces/ros2_ws/install/ffw_moveit_config/share/colcon-core/packages/ffw_moveit_config)
+[2.733s] INFO:colcon.colcon_ros.task.ament_python.build:Building ROS package in '/root/workspaces/ros2_ws/src/ai-worker-sim/ffw_teleop' with build type 'ament_python'
+[2.733s] Level 1:colcon.colcon_core.shell:create_environment_hook('ffw_teleop', 'ament_prefix_path')
+[2.734s] INFO:colcon.colcon_core.shell:Creating environment hook '/root/workspaces/ros2_ws/install/ffw_teleop/share/ffw_teleop/hook/ament_prefix_path.ps1'
+[2.749s] INFO:colcon.colcon_core.shell:Creating environment descriptor '/root/workspaces/ros2_ws/install/ffw_teleop/share/ffw_teleop/hook/ament_prefix_path.dsv'
+[2.765s] INFO:colcon.colcon_core.shell:Creating environment hook '/root/workspaces/ros2_ws/install/ffw_teleop/share/ffw_teleop/hook/ament_prefix_path.sh'
+[2.781s] INFO:colcon.colcon_core.shell:Skip shell extension 'powershell' for command environment: Not usable outside of PowerShell
+[2.781s] DEBUG:colcon.colcon_core.shell:Skip shell extension 'dsv' for command environment
+[2.869s] Level 1:colcon.colcon_core.environment:create_environment_scripts_only(ffw_navigation)
+[2.869s] Level 1:colcon.colcon_core.environment:checking '/root/workspaces/ros2_ws/install/ffw_navigation' for CMake module files
+[2.887s] Level 1:colcon.colcon_core.environment:checking '/root/workspaces/ros2_ws/install/ffw_navigation' for CMake config files
+[2.900s] Level 1:colcon.colcon_core.shell:create_environment_hook('ffw_navigation', 'cmake_prefix_path')
+[2.900s] INFO:colcon.colcon_core.shell:Creating environment hook '/root/workspaces/ros2_ws/install/ffw_navigation/share/ffw_navigation/hook/cmake_prefix_path.ps1'
+[2.916s] INFO:colcon.colcon_core.shell:Creating environment descriptor '/root/workspaces/ros2_ws/install/ffw_navigation/share/ffw_navigation/hook/cmake_prefix_path.dsv'
+[2.932s] INFO:colcon.colcon_core.shell:Creating environment hook '/root/workspaces/ros2_ws/install/ffw_navigation/share/ffw_navigation/hook/cmake_prefix_path.sh'
+[2.949s] Level 1:colcon.colcon_core.environment:checking '/root/workspaces/ros2_ws/install/ffw_navigation/lib'
+[2.949s] Level 1:colcon.colcon_core.shell:create_environment_hook('ffw_navigation', 'ld_library_path_lib')
+[2.950s] INFO:colcon.colcon_core.shell:Creating environment hook '/root/workspaces/ros2_ws/install/ffw_navigation/share/ffw_navigation/hook/ld_library_path_lib.ps1'
+[2.965s] INFO:colcon.colcon_core.shell:Creating environment descriptor '/root/workspaces/ros2_ws/install/ffw_navigation/share/ffw_navigation/hook/ld_library_path_lib.dsv'
+[2.983s] INFO:colcon.colcon_core.shell:Creating environment hook '/root/workspaces/ros2_ws/install/ffw_navigation/share/ffw_navigation/hook/ld_library_path_lib.sh'
+[2.999s] Level 1:colcon.colcon_core.environment:checking '/root/workspaces/ros2_ws/install/ffw_navigation/bin'
+[3.001s] Level 1:colcon.colcon_core.environment:checking '/root/workspaces/ros2_ws/install/ffw_navigation/lib/pkgconfig/ffw_navigation.pc'
+[3.004s] Level 1:colcon.colcon_core.environment:checking '/root/workspaces/ros2_ws/install/ffw_navigation/lib/python3.12/site-packages'
+[3.010s] Level 1:colcon.colcon_core.environment:checking '/root/workspaces/ros2_ws/install/ffw_navigation/bin'
+[3.011s] INFO:colcon.colcon_core.shell:Creating package script '/root/workspaces/ros2_ws/install/ffw_navigation/share/ffw_navigation/package.ps1'
+[3.028s] INFO:colcon.colcon_core.shell:Creating package descriptor '/root/workspaces/ros2_ws/install/ffw_navigation/share/ffw_navigation/package.dsv'
+[3.044s] INFO:colcon.colcon_core.shell:Creating package script '/root/workspaces/ros2_ws/install/ffw_navigation/share/ffw_navigation/package.sh'
+[3.053s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoked command in '/root/workspaces/ros2_ws/build/ffw_navigation' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/jazzy /usr/bin/cmake --install /root/workspaces/ros2_ws/build/ffw_navigation
+[3.058s] INFO:colcon.colcon_core.shell:Creating package script '/root/workspaces/ros2_ws/install/ffw_navigation/share/ffw_navigation/package.bash'
+[3.072s] INFO:colcon.colcon_core.shell:Creating package script '/root/workspaces/ros2_ws/install/ffw_navigation/share/ffw_navigation/package.zsh'
+[3.086s] Level 1:colcon.colcon_core.environment:create_file_with_runtime_dependencies(/root/workspaces/ros2_ws/install/ffw_navigation/share/colcon-core/packages/ffw_navigation)
+[3.109s] Level 1:colcon.colcon_core.environment:create_environment_scripts_only(ffw_navigation)
+[3.109s] Level 1:colcon.colcon_core.environment:checking '/root/workspaces/ros2_ws/install/ffw_navigation' for CMake module files
+[3.112s] Level 1:colcon.colcon_core.environment:checking '/root/workspaces/ros2_ws/install/ffw_navigation' for CMake config files
+[3.120s] Level 1:colcon.colcon_core.shell:create_environment_hook('ffw_navigation', 'cmake_prefix_path')
+[3.121s] INFO:colcon.colcon_core.shell:Creating environment hook '/root/workspaces/ros2_ws/install/ffw_navigation/share/ffw_navigation/hook/cmake_prefix_path.ps1'
+[3.135s] INFO:colcon.colcon_core.shell:Creating environment descriptor '/root/workspaces/ros2_ws/install/ffw_navigation/share/ffw_navigation/hook/cmake_prefix_path.dsv'
+[3.151s] INFO:colcon.colcon_core.shell:Creating environment hook '/root/workspaces/ros2_ws/install/ffw_navigation/share/ffw_navigation/hook/cmake_prefix_path.sh'
+[3.171s] Level 1:colcon.colcon_core.environment:checking '/root/workspaces/ros2_ws/install/ffw_navigation/lib'
+[3.171s] Level 1:colcon.colcon_core.shell:create_environment_hook('ffw_navigation', 'ld_library_path_lib')
+[3.172s] INFO:colcon.colcon_core.shell:Creating environment hook '/root/workspaces/ros2_ws/install/ffw_navigation/share/ffw_navigation/hook/ld_library_path_lib.ps1'
+[3.187s] INFO:colcon.colcon_core.shell:Creating environment descriptor '/root/workspaces/ros2_ws/install/ffw_navigation/share/ffw_navigation/hook/ld_library_path_lib.dsv'
+[3.205s] INFO:colcon.colcon_core.shell:Creating environment hook '/root/workspaces/ros2_ws/install/ffw_navigation/share/ffw_navigation/hook/ld_library_path_lib.sh'
+[3.222s] Level 1:colcon.colcon_core.environment:checking '/root/workspaces/ros2_ws/install/ffw_navigation/bin'
+[3.222s] Level 1:colcon.colcon_core.environment:checking '/root/workspaces/ros2_ws/install/ffw_navigation/lib/pkgconfig/ffw_navigation.pc'
+[3.227s] Level 1:colcon.colcon_core.environment:checking '/root/workspaces/ros2_ws/install/ffw_navigation/lib/python3.12/site-packages'
+[3.232s] Level 1:colcon.colcon_core.environment:checking '/root/workspaces/ros2_ws/install/ffw_navigation/bin'
+[3.242s] INFO:colcon.colcon_core.shell:Creating package script '/root/workspaces/ros2_ws/install/ffw_navigation/share/ffw_navigation/package.ps1'
+[3.262s] INFO:colcon.colcon_core.shell:Creating package descriptor '/root/workspaces/ros2_ws/install/ffw_navigation/share/ffw_navigation/package.dsv'
+[3.279s] INFO:colcon.colcon_core.shell:Creating package script '/root/workspaces/ros2_ws/install/ffw_navigation/share/ffw_navigation/package.sh'
+[3.295s] INFO:colcon.colcon_core.shell:Creating package script '/root/workspaces/ros2_ws/install/ffw_navigation/share/ffw_navigation/package.bash'
+[3.311s] INFO:colcon.colcon_core.shell:Creating package script '/root/workspaces/ros2_ws/install/ffw_navigation/share/ffw_navigation/package.zsh'
+[3.327s] Level 1:colcon.colcon_core.environment:create_file_with_runtime_dependencies(/root/workspaces/ros2_ws/install/ffw_navigation/share/colcon-core/packages/ffw_navigation)
+[3.354s] INFO:colcon.colcon_ros.task.ament_cmake.build:Building ROS package in '/root/workspaces/ros2_ws/src/ai-worker-sim/library_world' with build type 'ament_cmake'
+[3.354s] INFO:colcon.colcon_cmake.task.cmake.build:Building CMake package in '/root/workspaces/ros2_ws/src/ai-worker-sim/library_world'
+[3.359s] INFO:colcon.colcon_core.shell:Skip shell extension 'powershell' for command environment: Not usable outside of PowerShell
+[3.359s] DEBUG:colcon.colcon_core.shell:Skip shell extension 'dsv' for command environment
+[3.360s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoked command in '/root/workspaces/ros2_ws/build/ffw_swerve_drive_controller' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/jazzy /usr/bin/cmake --build /root/workspaces/ros2_ws/build/ffw_swerve_drive_controller -- -j4 -l4
+[3.364s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoking command in '/root/workspaces/ros2_ws/build/ffw_swerve_drive_controller': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/jazzy /usr/bin/cmake --install /root/workspaces/ros2_ws/build/ffw_swerve_drive_controller
+[3.744s] INFO:colcon.colcon_core.task.python.build:Building Python package in '/root/workspaces/ros2_ws/src/ai-worker-sim/ffw_teleop'
+[3.745s] INFO:colcon.colcon_core.shell:Skip shell extension 'powershell' for command environment: Not usable outside of PowerShell
+[3.745s] DEBUG:colcon.colcon_core.shell:Skip shell extension 'dsv' for command environment
+[3.800s] Level 1:colcon.colcon_core.environment:create_environment_scripts_only(ffw_description)
+[3.800s] Level 1:colcon.colcon_core.environment:checking '/root/workspaces/ros2_ws/install/ffw_description' for CMake module files
+[3.811s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoked command in '/root/workspaces/ros2_ws/build/ffw_description' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/jazzy /usr/bin/cmake --install /root/workspaces/ros2_ws/build/ffw_description
+[3.817s] Level 1:colcon.colcon_core.environment:checking '/root/workspaces/ros2_ws/install/ffw_description' for CMake config files
+[3.838s] Level 1:colcon.colcon_core.shell:create_environment_hook('ffw_description', 'cmake_prefix_path')
+[3.839s] INFO:colcon.colcon_core.shell:Creating environment hook '/root/workspaces/ros2_ws/install/ffw_description/share/ffw_description/hook/cmake_prefix_path.ps1'
+[3.861s] INFO:colcon.colcon_core.shell:Creating environment descriptor '/root/workspaces/ros2_ws/install/ffw_description/share/ffw_description/hook/cmake_prefix_path.dsv'
+[3.878s] INFO:colcon.colcon_core.shell:Creating environment hook '/root/workspaces/ros2_ws/install/ffw_description/share/ffw_description/hook/cmake_prefix_path.sh'
+[3.897s] Level 1:colcon.colcon_core.environment:checking '/root/workspaces/ros2_ws/install/ffw_description/bin'
+[3.900s] Level 1:colcon.colcon_core.environment:checking '/root/workspaces/ros2_ws/install/ffw_description/lib/pkgconfig/ffw_description.pc'
+[3.900s] Level 1:colcon.colcon_core.environment:checking '/root/workspaces/ros2_ws/install/ffw_description/lib/python3.12/site-packages'
+[3.901s] Level 1:colcon.colcon_core.environment:checking '/root/workspaces/ros2_ws/install/ffw_description/bin'
+[3.901s] INFO:colcon.colcon_core.shell:Creating package script '/root/workspaces/ros2_ws/install/ffw_description/share/ffw_description/package.ps1'
+[3.916s] INFO:colcon.colcon_core.shell:Creating package descriptor '/root/workspaces/ros2_ws/install/ffw_description/share/ffw_description/package.dsv'
+[3.932s] INFO:colcon.colcon_core.shell:Creating package script '/root/workspaces/ros2_ws/install/ffw_description/share/ffw_description/package.sh'
+[3.947s] INFO:colcon.colcon_core.shell:Creating package script '/root/workspaces/ros2_ws/install/ffw_description/share/ffw_description/package.bash'
+[3.962s] INFO:colcon.colcon_core.shell:Creating package script '/root/workspaces/ros2_ws/install/ffw_description/share/ffw_description/package.zsh'
+[3.976s] Level 1:colcon.colcon_core.environment:create_file_with_runtime_dependencies(/root/workspaces/ros2_ws/install/ffw_description/share/colcon-core/packages/ffw_description)
+[3.997s] Level 1:colcon.colcon_core.environment:create_environment_scripts_only(ffw_description)
+[3.997s] Level 1:colcon.colcon_core.environment:checking '/root/workspaces/ros2_ws/install/ffw_description' for CMake module files
+[4.001s] Level 1:colcon.colcon_core.environment:checking '/root/workspaces/ros2_ws/install/ffw_description' for CMake config files
+[4.012s] Level 1:colcon.colcon_core.shell:create_environment_hook('ffw_description', 'cmake_prefix_path')
+[4.012s] INFO:colcon.colcon_core.shell:Creating environment hook '/root/workspaces/ros2_ws/install/ffw_description/share/ffw_description/hook/cmake_prefix_path.ps1'
+[4.035s] INFO:colcon.colcon_core.shell:Creating environment descriptor '/root/workspaces/ros2_ws/install/ffw_description/share/ffw_description/hook/cmake_prefix_path.dsv'
+[4.052s] INFO:colcon.colcon_core.shell:Creating environment hook '/root/workspaces/ros2_ws/install/ffw_description/share/ffw_description/hook/cmake_prefix_path.sh'
+[4.069s] Level 1:colcon.colcon_core.environment:checking '/root/workspaces/ros2_ws/install/ffw_description/bin'
+[4.069s] Level 1:colcon.colcon_core.environment:checking '/root/workspaces/ros2_ws/install/ffw_description/lib/pkgconfig/ffw_description.pc'
+[4.074s] Level 1:colcon.colcon_core.environment:checking '/root/workspaces/ros2_ws/install/ffw_description/lib/python3.12/site-packages'
+[4.082s] Level 1:colcon.colcon_core.environment:checking '/root/workspaces/ros2_ws/install/ffw_description/bin'
+[4.087s] INFO:colcon.colcon_core.shell:Creating package script '/root/workspaces/ros2_ws/install/ffw_description/share/ffw_description/package.ps1'
+[4.118s] INFO:colcon.colcon_core.shell:Creating package descriptor '/root/workspaces/ros2_ws/install/ffw_description/share/ffw_description/package.dsv'
+[4.136s] INFO:colcon.colcon_core.shell:Creating package script '/root/workspaces/ros2_ws/install/ffw_description/share/ffw_description/package.sh'
+[4.155s] INFO:colcon.colcon_core.shell:Creating package script '/root/workspaces/ros2_ws/install/ffw_description/share/ffw_description/package.bash'
+[4.172s] INFO:colcon.colcon_core.shell:Creating package script '/root/workspaces/ros2_ws/install/ffw_description/share/ffw_description/package.zsh'
+[4.190s] Level 1:colcon.colcon_core.environment:create_file_with_runtime_dependencies(/root/workspaces/ros2_ws/install/ffw_description/share/colcon-core/packages/ffw_description)
+[4.210s] INFO:colcon.colcon_ros.task.ament_cmake.build:Building ROS package in '/root/workspaces/ros2_ws/src/Gazebo_worlds/warehouse_worlds' with build type 'ament_cmake'
+[4.211s] INFO:colcon.colcon_cmake.task.cmake.build:Building CMake package in '/root/workspaces/ros2_ws/src/Gazebo_worlds/warehouse_worlds'
+[4.211s] INFO:colcon.colcon_core.shell:Skip shell extension 'powershell' for command environment: Not usable outside of PowerShell
+[4.211s] DEBUG:colcon.colcon_core.shell:Skip shell extension 'dsv' for command environment
+[4.298s] Level 1:colcon.colcon_core.environment:create_environment_scripts_only(ffw_swerve_drive_controller)
+[4.298s] Level 1:colcon.colcon_core.environment:checking '/root/workspaces/ros2_ws/install/ffw_swerve_drive_controller' for CMake module files
+[4.318s] Level 1:colcon.colcon_core.environment:checking '/root/workspaces/ros2_ws/install/ffw_swerve_drive_controller' for CMake config files
+[4.335s] Level 1:colcon.colcon_core.shell:create_environment_hook('ffw_swerve_drive_controller', 'cmake_prefix_path')
+[4.335s] INFO:colcon.colcon_core.shell:Creating environment hook '/root/workspaces/ros2_ws/install/ffw_swerve_drive_controller/share/ffw_swerve_drive_controller/hook/cmake_prefix_path.ps1'
+[4.339s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoking command in '/root/workspaces/ros2_ws/build/library_world': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/jazzy /usr/bin/cmake --build /root/workspaces/ros2_ws/build/library_world -- -j4 -l4
+[4.342s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoked command in '/root/workspaces/ros2_ws/build/ffw_swerve_drive_controller' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/jazzy /usr/bin/cmake --install /root/workspaces/ros2_ws/build/ffw_swerve_drive_controller
+[4.361s] INFO:colcon.colcon_core.shell:Creating environment descriptor '/root/workspaces/ros2_ws/install/ffw_swerve_drive_controller/share/ffw_swerve_drive_controller/hook/cmake_prefix_path.dsv'
+[4.379s] INFO:colcon.colcon_core.shell:Creating environment hook '/root/workspaces/ros2_ws/install/ffw_swerve_drive_controller/share/ffw_swerve_drive_controller/hook/cmake_prefix_path.sh'
+[4.401s] Level 1:colcon.colcon_core.environment:checking '/root/workspaces/ros2_ws/install/ffw_swerve_drive_controller/lib'
+[4.402s] Level 1:colcon.colcon_core.shell:create_environment_hook('ffw_swerve_drive_controller', 'ld_library_path_lib')
+[4.406s] INFO:colcon.colcon_core.shell:Creating environment hook '/root/workspaces/ros2_ws/install/ffw_swerve_drive_controller/share/ffw_swerve_drive_controller/hook/ld_library_path_lib.ps1'
+[4.426s] INFO:colcon.colcon_core.shell:Creating environment descriptor '/root/workspaces/ros2_ws/install/ffw_swerve_drive_controller/share/ffw_swerve_drive_controller/hook/ld_library_path_lib.dsv'
+[4.441s] INFO:colcon.colcon_core.shell:Creating environment hook '/root/workspaces/ros2_ws/install/ffw_swerve_drive_controller/share/ffw_swerve_drive_controller/hook/ld_library_path_lib.sh'
+[4.457s] Level 1:colcon.colcon_core.environment:checking '/root/workspaces/ros2_ws/install/ffw_swerve_drive_controller/bin'
+[4.459s] Level 1:colcon.colcon_core.environment:checking '/root/workspaces/ros2_ws/install/ffw_swerve_drive_controller/lib/pkgconfig/ffw_swerve_drive_controller.pc'
+[4.464s] Level 1:colcon.colcon_core.environment:checking '/root/workspaces/ros2_ws/install/ffw_swerve_drive_controller/lib/python3.12/site-packages'
+[4.469s] Level 1:colcon.colcon_core.environment:checking '/root/workspaces/ros2_ws/install/ffw_swerve_drive_controller/bin'
+[4.472s] INFO:colcon.colcon_core.shell:Creating package script '/root/workspaces/ros2_ws/install/ffw_swerve_drive_controller/share/ffw_swerve_drive_controller/package.ps1'
+[4.514s] INFO:colcon.colcon_core.shell:Creating package descriptor '/root/workspaces/ros2_ws/install/ffw_swerve_drive_controller/share/ffw_swerve_drive_controller/package.dsv'
+[4.531s] INFO:colcon.colcon_core.shell:Creating package script '/root/workspaces/ros2_ws/install/ffw_swerve_drive_controller/share/ffw_swerve_drive_controller/package.sh'
+[4.546s] INFO:colcon.colcon_core.shell:Creating package script '/root/workspaces/ros2_ws/install/ffw_swerve_drive_controller/share/ffw_swerve_drive_controller/package.bash'
+[4.561s] INFO:colcon.colcon_core.shell:Creating package script '/root/workspaces/ros2_ws/install/ffw_swerve_drive_controller/share/ffw_swerve_drive_controller/package.zsh'
+[4.580s] Level 1:colcon.colcon_core.environment:create_file_with_runtime_dependencies(/root/workspaces/ros2_ws/install/ffw_swerve_drive_controller/share/colcon-core/packages/ffw_swerve_drive_controller)
+[4.598s] Level 1:colcon.colcon_core.environment:create_environment_scripts_only(ffw_swerve_drive_controller)
+[4.599s] Level 1:colcon.colcon_core.environment:checking '/root/workspaces/ros2_ws/install/ffw_swerve_drive_controller' for CMake module files
+[4.611s] Level 1:colcon.colcon_core.environment:checking '/root/workspaces/ros2_ws/install/ffw_swerve_drive_controller' for CMake config files
+[4.628s] Level 1:colcon.colcon_core.shell:create_environment_hook('ffw_swerve_drive_controller', 'cmake_prefix_path')
+[4.631s] INFO:colcon.colcon_core.shell:Creating environment hook '/root/workspaces/ros2_ws/install/ffw_swerve_drive_controller/share/ffw_swerve_drive_controller/hook/cmake_prefix_path.ps1'
+[4.660s] INFO:colcon.colcon_core.shell:Creating environment descriptor '/root/workspaces/ros2_ws/install/ffw_swerve_drive_controller/share/ffw_swerve_drive_controller/hook/cmake_prefix_path.dsv'
+[4.681s] INFO:colcon.colcon_core.shell:Creating environment hook '/root/workspaces/ros2_ws/install/ffw_swerve_drive_controller/share/ffw_swerve_drive_controller/hook/cmake_prefix_path.sh'
+[4.699s] Level 1:colcon.colcon_core.environment:checking '/root/workspaces/ros2_ws/install/ffw_swerve_drive_controller/lib'
+[4.700s] Level 1:colcon.colcon_core.shell:create_environment_hook('ffw_swerve_drive_controller', 'ld_library_path_lib')
+[4.709s] INFO:colcon.colcon_core.shell:Creating environment hook '/root/workspaces/ros2_ws/install/ffw_swerve_drive_controller/share/ffw_swerve_drive_controller/hook/ld_library_path_lib.ps1'
+[4.735s] INFO:colcon.colcon_core.shell:Creating environment descriptor '/root/workspaces/ros2_ws/install/ffw_swerve_drive_controller/share/ffw_swerve_drive_controller/hook/ld_library_path_lib.dsv'
+[4.751s] INFO:colcon.colcon_core.shell:Creating environment hook '/root/workspaces/ros2_ws/install/ffw_swerve_drive_controller/share/ffw_swerve_drive_controller/hook/ld_library_path_lib.sh'
+[4.768s] Level 1:colcon.colcon_core.environment:checking '/root/workspaces/ros2_ws/install/ffw_swerve_drive_controller/bin'
+[4.768s] Level 1:colcon.colcon_core.environment:checking '/root/workspaces/ros2_ws/install/ffw_swerve_drive_controller/lib/pkgconfig/ffw_swerve_drive_controller.pc'
+[4.778s] Level 1:colcon.colcon_core.environment:checking '/root/workspaces/ros2_ws/install/ffw_swerve_drive_controller/lib/python3.12/site-packages'
+[4.789s] Level 1:colcon.colcon_core.environment:checking '/root/workspaces/ros2_ws/install/ffw_swerve_drive_controller/bin'
+[4.800s] INFO:colcon.colcon_core.shell:Creating package script '/root/workspaces/ros2_ws/install/ffw_swerve_drive_controller/share/ffw_swerve_drive_controller/package.ps1'
+[4.825s] INFO:colcon.colcon_core.shell:Creating package descriptor '/root/workspaces/ros2_ws/install/ffw_swerve_drive_controller/share/ffw_swerve_drive_controller/package.dsv'
+[4.842s] INFO:colcon.colcon_core.shell:Creating package script '/root/workspaces/ros2_ws/install/ffw_swerve_drive_controller/share/ffw_swerve_drive_controller/package.sh'
+[4.859s] INFO:colcon.colcon_core.shell:Creating package script '/root/workspaces/ros2_ws/install/ffw_swerve_drive_controller/share/ffw_swerve_drive_controller/package.bash'
+[4.874s] INFO:colcon.colcon_core.shell:Creating package script '/root/workspaces/ros2_ws/install/ffw_swerve_drive_controller/share/ffw_swerve_drive_controller/package.zsh'
+[4.890s] Level 1:colcon.colcon_core.environment:create_file_with_runtime_dependencies(/root/workspaces/ros2_ws/install/ffw_swerve_drive_controller/share/colcon-core/packages/ffw_swerve_drive_controller)
+[4.907s] INFO:colcon.colcon_ros.task.ament_python.build:Building ROS package in '/root/workspaces/ros2_ws/src/ai-worker-sim/ffw_bringup' with build type 'ament_python'
+[4.908s] Level 1:colcon.colcon_core.shell:create_environment_hook('ffw_bringup', 'ament_prefix_path')
+[4.908s] INFO:colcon.colcon_core.shell:Creating environment hook '/root/workspaces/ros2_ws/install/ffw_bringup/share/ffw_bringup/hook/ament_prefix_path.ps1'
+[4.929s] INFO:colcon.colcon_core.shell:Creating environment descriptor '/root/workspaces/ros2_ws/install/ffw_bringup/share/ffw_bringup/hook/ament_prefix_path.dsv'
+[4.943s] INFO:colcon.colcon_core.shell:Creating environment hook '/root/workspaces/ros2_ws/install/ffw_bringup/share/ffw_bringup/hook/ament_prefix_path.sh'
+[4.964s] INFO:colcon.colcon_core.shell:Skip shell extension 'powershell' for command environment: Not usable outside of PowerShell
+[4.968s] DEBUG:colcon.colcon_core.shell:Skip shell extension 'dsv' for command environment
+[5.055s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoked command in '/root/workspaces/ros2_ws/build/library_world' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/jazzy /usr/bin/cmake --build /root/workspaces/ros2_ws/build/library_world -- -j4 -l4
+[5.076s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoking command in '/root/workspaces/ros2_ws/build/library_world': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/jazzy /usr/bin/cmake --install /root/workspaces/ros2_ws/build/library_world
+[5.198s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoking command in '/root/workspaces/ros2_ws/build/warehouse_worlds': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/jazzy /usr/bin/cmake --build /root/workspaces/ros2_ws/build/warehouse_worlds -- -j4 -l4
+[5.527s] INFO:colcon.colcon_core.task.python.build:Building Python package in '/root/workspaces/ros2_ws/src/ai-worker-sim/ffw_bringup'
+[5.527s] INFO:colcon.colcon_core.shell:Skip shell extension 'powershell' for command environment: Not usable outside of PowerShell
+[5.527s] DEBUG:colcon.colcon_core.shell:Skip shell extension 'dsv' for command environment
+[5.944s] DEBUG:colcon.colcon_core.task.python.build:Available setuptools commands: init_catalog, bdist, check, bdist_wheel, install_egg_info, build, easy_install, editable_wheel, install, bdist_egg, egg_info, update_catalog, develop, install_scripts, install_data, build_clib, dist_info, sdist, test, upload_docs, setopt, extract_messages, alias, clean, bdist_dumb, upload, build_scripts, bdist_rpm, saveopts, rotate, register, compile_catalog, install_headers, build_ext, build_py, symlink_data, install_lib
+[5.994s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoked command in '/root/workspaces/ros2_ws/build/warehouse_worlds' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/jazzy /usr/bin/cmake --build /root/workspaces/ros2_ws/build/warehouse_worlds -- -j4 -l4
+[6.022s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoking command in '/root/workspaces/ros2_ws/build/warehouse_worlds': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/jazzy /usr/bin/cmake --install /root/workspaces/ros2_ws/build/warehouse_worlds
+[6.320s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoking command in '/root/workspaces/ros2_ws/src/ai-worker-sim/ffw_teleop': PYTHONPATH=/root/workspaces/ros2_ws/build/ffw_teleop/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/root/workspaces/ros2_ws/install/ffw_teleop/lib/python3.12/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../../../build/ffw_teleop build --build-base /root/workspaces/ros2_ws/build/ffw_teleop/build install --record /root/workspaces/ros2_ws/build/ffw_teleop/install.log --install-scripts $base/lib/ffw_teleop --single-version-externally-managed install_data
+[6.336s] Level 1:colcon.colcon_core.environment:create_environment_scripts_only(library_world)
+[6.340s] Level 1:colcon.colcon_core.environment:checking '/root/workspaces/ros2_ws/install/library_world' for CMake module files
+[6.352s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoked command in '/root/workspaces/ros2_ws/build/library_world' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/jazzy /usr/bin/cmake --install /root/workspaces/ros2_ws/build/library_world
+[6.357s] Level 1:colcon.colcon_core.environment:checking '/root/workspaces/ros2_ws/install/library_world' for CMake config files
+[6.510s] Level 1:colcon.colcon_core.shell:create_environment_hook('library_world', 'cmake_prefix_path')
+[6.510s] INFO:colcon.colcon_core.shell:Creating environment hook '/root/workspaces/ros2_ws/install/library_world/share/library_world/hook/cmake_prefix_path.ps1'
+[6.527s] INFO:colcon.colcon_core.shell:Creating environment descriptor '/root/workspaces/ros2_ws/install/library_world/share/library_world/hook/cmake_prefix_path.dsv'
+[6.542s] INFO:colcon.colcon_core.shell:Creating environment hook '/root/workspaces/ros2_ws/install/library_world/share/library_world/hook/cmake_prefix_path.sh'
+[6.557s] Level 1:colcon.colcon_core.environment:checking '/root/workspaces/ros2_ws/install/library_world/bin'
+[6.560s] Level 1:colcon.colcon_core.environment:checking '/root/workspaces/ros2_ws/install/library_world/lib/pkgconfig/library_world.pc'
+[6.560s] Level 1:colcon.colcon_core.environment:checking '/root/workspaces/ros2_ws/install/library_world/lib/python3.12/site-packages'
+[6.561s] Level 1:colcon.colcon_core.environment:checking '/root/workspaces/ros2_ws/install/library_world/bin'
+[6.561s] INFO:colcon.colcon_core.shell:Creating package script '/root/workspaces/ros2_ws/install/library_world/share/library_world/package.ps1'
+[6.577s] INFO:colcon.colcon_core.shell:Creating package descriptor '/root/workspaces/ros2_ws/install/library_world/share/library_world/package.dsv'
+[6.593s] INFO:colcon.colcon_core.shell:Creating package script '/root/workspaces/ros2_ws/install/library_world/share/library_world/package.sh'
+[6.609s] INFO:colcon.colcon_core.shell:Creating package script '/root/workspaces/ros2_ws/install/library_world/share/library_world/package.bash'
+[6.623s] INFO:colcon.colcon_core.shell:Creating package script '/root/workspaces/ros2_ws/install/library_world/share/library_world/package.zsh'
+[6.637s] Level 1:colcon.colcon_core.environment:create_file_with_runtime_dependencies(/root/workspaces/ros2_ws/install/library_world/share/colcon-core/packages/library_world)
+[6.645s] Level 1:colcon.colcon_core.environment:create_environment_scripts_only(library_world)
+[6.645s] Level 1:colcon.colcon_core.environment:checking '/root/workspaces/ros2_ws/install/library_world' for CMake module files
+[6.649s] Level 1:colcon.colcon_core.environment:checking '/root/workspaces/ros2_ws/install/library_world' for CMake config files
+[6.718s] Level 1:colcon.colcon_core.shell:create_environment_hook('library_world', 'cmake_prefix_path')
+[6.718s] INFO:colcon.colcon_core.shell:Creating environment hook '/root/workspaces/ros2_ws/install/library_world/share/library_world/hook/cmake_prefix_path.ps1'
+[6.734s] INFO:colcon.colcon_core.shell:Creating environment descriptor '/root/workspaces/ros2_ws/install/library_world/share/library_world/hook/cmake_prefix_path.dsv'
+[6.750s] INFO:colcon.colcon_core.shell:Creating environment hook '/root/workspaces/ros2_ws/install/library_world/share/library_world/hook/cmake_prefix_path.sh'
+[6.765s] Level 1:colcon.colcon_core.environment:checking '/root/workspaces/ros2_ws/install/library_world/bin'
+[6.766s] Level 1:colcon.colcon_core.environment:checking '/root/workspaces/ros2_ws/install/library_world/lib/pkgconfig/library_world.pc'
+[6.766s] Level 1:colcon.colcon_core.environment:checking '/root/workspaces/ros2_ws/install/library_world/lib/python3.12/site-packages'
+[6.766s] Level 1:colcon.colcon_core.environment:checking '/root/workspaces/ros2_ws/install/library_world/bin'
+[6.767s] INFO:colcon.colcon_core.shell:Creating package script '/root/workspaces/ros2_ws/install/library_world/share/library_world/package.ps1'
+[6.783s] INFO:colcon.colcon_core.shell:Creating package descriptor '/root/workspaces/ros2_ws/install/library_world/share/library_world/package.dsv'
+[6.799s] INFO:colcon.colcon_core.shell:Creating package script '/root/workspaces/ros2_ws/install/library_world/share/library_world/package.sh'
+[6.816s] INFO:colcon.colcon_core.shell:Creating package script '/root/workspaces/ros2_ws/install/library_world/share/library_world/package.bash'
+[6.832s] INFO:colcon.colcon_core.shell:Creating package script '/root/workspaces/ros2_ws/install/library_world/share/library_world/package.zsh'
+[6.847s] Level 1:colcon.colcon_core.environment:create_file_with_runtime_dependencies(/root/workspaces/ros2_ws/install/library_world/share/colcon-core/packages/library_world)
+[6.850s] DEBUG:colcon.colcon_core.task.python.build:Available setuptools commands: init_catalog, bdist, check, bdist_wheel, install_egg_info, build, easy_install, editable_wheel, install, bdist_egg, egg_info, update_catalog, develop, install_scripts, install_data, build_clib, dist_info, sdist, test, upload_docs, setopt, extract_messages, alias, clean, bdist_dumb, upload, build_scripts, bdist_rpm, saveopts, rotate, register, compile_catalog, install_headers, build_ext, build_py, symlink_data, install_lib
+[7.289s] Level 1:colcon.colcon_core.environment:checking '/root/workspaces/ros2_ws/install/ffw_teleop' for CMake module files
+[7.313s] Level 1:colcon.colcon_core.environment:checking '/root/workspaces/ros2_ws/install/ffw_teleop' for CMake config files
+[7.325s] Level 1:colcon.colcon_core.environment:checking '/root/workspaces/ros2_ws/install/ffw_teleop/lib'
+[7.326s] Level 1:colcon.colcon_core.environment:checking '/root/workspaces/ros2_ws/install/ffw_teleop/bin'
+[7.328s] Level 1:colcon.colcon_core.environment:checking '/root/workspaces/ros2_ws/install/ffw_teleop/lib/pkgconfig/ffw_teleop.pc'
+[7.330s] Level 1:colcon.colcon_core.environment:checking '/root/workspaces/ros2_ws/install/ffw_teleop/lib/python3.12/site-packages'
+[7.330s] Level 1:colcon.colcon_core.shell:create_environment_hook('ffw_teleop', 'pythonpath')
+[7.331s] INFO:colcon.colcon_core.shell:Creating environment hook '/root/workspaces/ros2_ws/install/ffw_teleop/share/ffw_teleop/hook/pythonpath.ps1'
+[7.347s] INFO:colcon.colcon_core.shell:Creating environment descriptor '/root/workspaces/ros2_ws/install/ffw_teleop/share/ffw_teleop/hook/pythonpath.dsv'
+[7.362s] INFO:colcon.colcon_core.shell:Creating environment hook '/root/workspaces/ros2_ws/install/ffw_teleop/share/ffw_teleop/hook/pythonpath.sh'
+[7.378s] Level 1:colcon.colcon_core.environment:checking '/root/workspaces/ros2_ws/install/ffw_teleop/bin'
+[7.378s] Level 1:colcon.colcon_core.environment:create_environment_scripts_only(ffw_teleop)
+[7.378s] INFO:colcon.colcon_core.shell:Creating package script '/root/workspaces/ros2_ws/install/ffw_teleop/share/ffw_teleop/package.ps1'
+[7.394s] INFO:colcon.colcon_core.shell:Creating package descriptor '/root/workspaces/ros2_ws/install/ffw_teleop/share/ffw_teleop/package.dsv'
+[7.408s] INFO:colcon.colcon_core.shell:Creating package script '/root/workspaces/ros2_ws/install/ffw_teleop/share/ffw_teleop/package.sh'
+[7.424s] INFO:colcon.colcon_core.shell:Creating package script '/root/workspaces/ros2_ws/install/ffw_teleop/share/ffw_teleop/package.bash'
+[7.441s] INFO:colcon.colcon_core.shell:Creating package script '/root/workspaces/ros2_ws/install/ffw_teleop/share/ffw_teleop/package.zsh'
+[7.456s] Level 1:colcon.colcon_core.environment:create_file_with_runtime_dependencies(/root/workspaces/ros2_ws/install/ffw_teleop/share/colcon-core/packages/ffw_teleop)
+[7.701s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoking command in '/root/workspaces/ros2_ws/src/ai-worker-sim/ffw_bringup': AMENT_PREFIX_PATH=/root/workspaces/ros2_ws/install/ffw_description:${AMENT_PREFIX_PATH} CMAKE_PREFIX_PATH=/root/workspaces/ros2_ws/install/ffw_description:${CMAKE_PREFIX_PATH} PYTHONPATH=/root/workspaces/ros2_ws/build/ffw_bringup/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/root/workspaces/ros2_ws/install/ffw_bringup/lib/python3.12/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../../../build/ffw_bringup build --build-base /root/workspaces/ros2_ws/build/ffw_bringup/build install --record /root/workspaces/ros2_ws/build/ffw_bringup/install.log --install-scripts $base/lib/ffw_bringup --single-version-externally-managed install_data
+[7.788s] Level 1:colcon.colcon_core.environment:create_environment_scripts_only(warehouse_worlds)
+[7.789s] Level 1:colcon.colcon_core.environment:checking '/root/workspaces/ros2_ws/install/warehouse_worlds' for CMake module files
+[7.805s] Level 1:colcon.colcon_core.environment:checking '/root/workspaces/ros2_ws/install/warehouse_worlds' for CMake config files
+[8.009s] Level 1:colcon.colcon_core.shell:create_environment_hook('warehouse_worlds', 'cmake_prefix_path')
+[8.010s] INFO:colcon.colcon_core.shell:Creating environment hook '/root/workspaces/ros2_ws/install/warehouse_worlds/share/warehouse_worlds/hook/cmake_prefix_path.ps1'
+[8.028s] INFO:colcon.colcon_core.shell:Creating environment descriptor '/root/workspaces/ros2_ws/install/warehouse_worlds/share/warehouse_worlds/hook/cmake_prefix_path.dsv'
+[8.044s] INFO:colcon.colcon_core.shell:Creating environment hook '/root/workspaces/ros2_ws/install/warehouse_worlds/share/warehouse_worlds/hook/cmake_prefix_path.sh'
+[8.060s] Level 1:colcon.colcon_core.environment:checking '/root/workspaces/ros2_ws/install/warehouse_worlds/bin'
+[8.062s] Level 1:colcon.colcon_core.environment:checking '/root/workspaces/ros2_ws/install/warehouse_worlds/lib/pkgconfig/warehouse_worlds.pc'
+[8.063s] Level 1:colcon.colcon_core.environment:checking '/root/workspaces/ros2_ws/install/warehouse_worlds/lib/python3.12/site-packages'
+[8.063s] Level 1:colcon.colcon_core.environment:checking '/root/workspaces/ros2_ws/install/warehouse_worlds/bin'
+[8.063s] INFO:colcon.colcon_core.shell:Creating package script '/root/workspaces/ros2_ws/install/warehouse_worlds/share/warehouse_worlds/package.ps1'
+[8.079s] INFO:colcon.colcon_core.shell:Creating package descriptor '/root/workspaces/ros2_ws/install/warehouse_worlds/share/warehouse_worlds/package.dsv'
+[8.095s] INFO:colcon.colcon_core.shell:Creating package script '/root/workspaces/ros2_ws/install/warehouse_worlds/share/warehouse_worlds/package.sh'
+[8.110s] INFO:colcon.colcon_core.shell:Creating package script '/root/workspaces/ros2_ws/install/warehouse_worlds/share/warehouse_worlds/package.bash'
+[8.124s] INFO:colcon.colcon_core.shell:Creating package script '/root/workspaces/ros2_ws/install/warehouse_worlds/share/warehouse_worlds/package.zsh'
+[8.139s] Level 1:colcon.colcon_core.environment:create_file_with_runtime_dependencies(/root/workspaces/ros2_ws/install/warehouse_worlds/share/colcon-core/packages/warehouse_worlds)
+[8.147s] Level 1:colcon.colcon_core.environment:create_environment_scripts_only(warehouse_worlds)
+[8.147s] Level 1:colcon.colcon_core.environment:checking '/root/workspaces/ros2_ws/install/warehouse_worlds' for CMake module files
+[8.150s] Level 1:colcon.colcon_core.environment:checking '/root/workspaces/ros2_ws/install/warehouse_worlds' for CMake config files
+[8.241s] Level 1:colcon.colcon_core.shell:create_environment_hook('warehouse_worlds', 'cmake_prefix_path')
+[8.241s] INFO:colcon.colcon_core.shell:Creating environment hook '/root/workspaces/ros2_ws/install/warehouse_worlds/share/warehouse_worlds/hook/cmake_prefix_path.ps1'
+[8.259s] INFO:colcon.colcon_core.shell:Creating environment descriptor '/root/workspaces/ros2_ws/install/warehouse_worlds/share/warehouse_worlds/hook/cmake_prefix_path.dsv'
+[8.274s] INFO:colcon.colcon_core.shell:Creating environment hook '/root/workspaces/ros2_ws/install/warehouse_worlds/share/warehouse_worlds/hook/cmake_prefix_path.sh'
+[8.291s] Level 1:colcon.colcon_core.environment:checking '/root/workspaces/ros2_ws/install/warehouse_worlds/bin'
+[8.291s] Level 1:colcon.colcon_core.environment:checking '/root/workspaces/ros2_ws/install/warehouse_worlds/lib/pkgconfig/warehouse_worlds.pc'
+[8.292s] Level 1:colcon.colcon_core.environment:checking '/root/workspaces/ros2_ws/install/warehouse_worlds/lib/python3.12/site-packages'
+[8.292s] Level 1:colcon.colcon_core.environment:checking '/root/workspaces/ros2_ws/install/warehouse_worlds/bin'
+[8.292s] INFO:colcon.colcon_core.shell:Creating package script '/root/workspaces/ros2_ws/install/warehouse_worlds/share/warehouse_worlds/package.ps1'
+[8.307s] INFO:colcon.colcon_core.shell:Creating package descriptor '/root/workspaces/ros2_ws/install/warehouse_worlds/share/warehouse_worlds/package.dsv'
+[8.323s] INFO:colcon.colcon_core.shell:Creating package script '/root/workspaces/ros2_ws/install/warehouse_worlds/share/warehouse_worlds/package.sh'
+[8.339s] INFO:colcon.colcon_core.shell:Creating package script '/root/workspaces/ros2_ws/install/warehouse_worlds/share/warehouse_worlds/package.bash'
+[8.356s] INFO:colcon.colcon_core.shell:Creating package script '/root/workspaces/ros2_ws/install/warehouse_worlds/share/warehouse_worlds/package.zsh'
+[8.371s] Level 1:colcon.colcon_core.environment:create_file_with_runtime_dependencies(/root/workspaces/ros2_ws/install/warehouse_worlds/share/colcon-core/packages/warehouse_worlds)
+[8.374s] Level 1:colcon.colcon_core.environment:checking '/root/workspaces/ros2_ws/install/ffw_bringup' for CMake module files
+[8.399s] Level 1:colcon.colcon_core.environment:checking '/root/workspaces/ros2_ws/install/ffw_bringup' for CMake config files
+[8.420s] Level 1:colcon.colcon_core.environment:checking '/root/workspaces/ros2_ws/install/ffw_bringup/lib'
+[8.420s] Level 1:colcon.colcon_core.environment:checking '/root/workspaces/ros2_ws/install/ffw_bringup/bin'
+[8.422s] Level 1:colcon.colcon_core.environment:checking '/root/workspaces/ros2_ws/install/ffw_bringup/lib/pkgconfig/ffw_bringup.pc'
+[8.424s] Level 1:colcon.colcon_core.environment:checking '/root/workspaces/ros2_ws/install/ffw_bringup/lib/python3.12/site-packages'
+[8.424s] Level 1:colcon.colcon_core.shell:create_environment_hook('ffw_bringup', 'pythonpath')
+[8.425s] INFO:colcon.colcon_core.shell:Creating environment hook '/root/workspaces/ros2_ws/install/ffw_bringup/share/ffw_bringup/hook/pythonpath.ps1'
+[8.443s] INFO:colcon.colcon_core.shell:Creating environment descriptor '/root/workspaces/ros2_ws/install/ffw_bringup/share/ffw_bringup/hook/pythonpath.dsv'
+[8.457s] INFO:colcon.colcon_core.shell:Creating environment hook '/root/workspaces/ros2_ws/install/ffw_bringup/share/ffw_bringup/hook/pythonpath.sh'
+[8.460s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoked command in '/root/workspaces/ros2_ws/src/ai-worker-sim/ffw_teleop' returned '0': PYTHONPATH=/root/workspaces/ros2_ws/build/ffw_teleop/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/root/workspaces/ros2_ws/install/ffw_teleop/lib/python3.12/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../../../build/ffw_teleop build --build-base /root/workspaces/ros2_ws/build/ffw_teleop/build install --record /root/workspaces/ros2_ws/build/ffw_teleop/install.log --install-scripts $base/lib/ffw_teleop --single-version-externally-managed install_data
+[8.474s] Level 1:colcon.colcon_core.environment:checking '/root/workspaces/ros2_ws/install/ffw_bringup/bin'
+[8.474s] Level 1:colcon.colcon_core.environment:create_environment_scripts_only(ffw_bringup)
+[8.474s] INFO:colcon.colcon_core.shell:Creating package script '/root/workspaces/ros2_ws/install/ffw_bringup/share/ffw_bringup/package.ps1'
+[8.490s] INFO:colcon.colcon_core.shell:Creating package descriptor '/root/workspaces/ros2_ws/install/ffw_bringup/share/ffw_bringup/package.dsv'
+[8.506s] INFO:colcon.colcon_core.shell:Creating package script '/root/workspaces/ros2_ws/install/ffw_bringup/share/ffw_bringup/package.sh'
+[8.520s] INFO:colcon.colcon_core.shell:Creating package script '/root/workspaces/ros2_ws/install/ffw_bringup/share/ffw_bringup/package.bash'
+[8.534s] INFO:colcon.colcon_core.shell:Creating package script '/root/workspaces/ros2_ws/install/ffw_bringup/share/ffw_bringup/package.zsh'
+[8.548s] Level 1:colcon.colcon_core.environment:create_file_with_runtime_dependencies(/root/workspaces/ros2_ws/install/ffw_bringup/share/colcon-core/packages/ffw_bringup)
+[8.565s] DEBUG:colcon.colcon_parallel_executor.executor.parallel:closing loop
+[8.565s] DEBUG:colcon.colcon_parallel_executor.executor.parallel:loop closed
+[8.566s] DEBUG:colcon.colcon_parallel_executor.executor.parallel:run_until_complete finished with '0'
+[8.566s] DEBUG:colcon.colcon_core.event_reactor:joining thread
+[9.065s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoked command in '/root/workspaces/ros2_ws/build/warehouse_worlds' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/jazzy /usr/bin/cmake --install /root/workspaces/ros2_ws/build/warehouse_worlds
+[9.111s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoked command in '/root/workspaces/ros2_ws/src/ai-worker-sim/ffw_bringup' returned '0': AMENT_PREFIX_PATH=/root/workspaces/ros2_ws/install/ffw_description:${AMENT_PREFIX_PATH} CMAKE_PREFIX_PATH=/root/workspaces/ros2_ws/install/ffw_description:${CMAKE_PREFIX_PATH} PYTHONPATH=/root/workspaces/ros2_ws/build/ffw_bringup/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/root/workspaces/ros2_ws/install/ffw_bringup/lib/python3.12/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../../../build/ffw_bringup build --build-base /root/workspaces/ros2_ws/build/ffw_bringup/build install --record /root/workspaces/ros2_ws/build/ffw_bringup/install.log --install-scripts $base/lib/ffw_bringup --single-version-externally-managed install_data
+[9.189s] INFO:colcon.colcon_core.plugin_system:Skipping extension 'colcon_notification.desktop_notification.notify_send': Could not find 'notify-send'
+[9.189s] INFO:colcon.colcon_core.plugin_system:Skipping extension 'colcon_notification.desktop_notification.terminal_notifier': Not used on non-Darwin systems
+[9.202s] INFO:colcon.colcon_core.plugin_system:Skipping extension 'colcon_notification.desktop_notification.win32': Not used on non-Windows systems
+[9.212s] INFO:colcon.colcon_notification.desktop_notification:Sending desktop notification using 'notify2'
+[9.233s] DEBUG:colcon.colcon_notification.desktop_notification.notify2:Failed to initialize notify2: org.freedesktop.DBus.Error.Spawn.ExecFailed: /usr/bin/dbus-launch terminated abnormally without any error message
+[9.233s] DEBUG:colcon.colcon_core.event_reactor:joined thread
+[9.243s] INFO:colcon.colcon_core.shell:Creating prefix script '/root/workspaces/ros2_ws/install/local_setup.ps1'
+[9.269s] INFO:colcon.colcon_core.shell:Creating prefix util module '/root/workspaces/ros2_ws/install/_local_setup_util_ps1.py'
+[9.288s] INFO:colcon.colcon_core.shell:Creating prefix chain script '/root/workspaces/ros2_ws/install/setup.ps1'
+[9.309s] INFO:colcon.colcon_core.shell:Creating prefix script '/root/workspaces/ros2_ws/install/local_setup.sh'
+[9.327s] INFO:colcon.colcon_core.shell:Creating prefix util module '/root/workspaces/ros2_ws/install/_local_setup_util_sh.py'
+[9.346s] INFO:colcon.colcon_core.shell:Creating prefix chain script '/root/workspaces/ros2_ws/install/setup.sh'
+[9.370s] INFO:colcon.colcon_core.shell:Creating prefix script '/root/workspaces/ros2_ws/install/local_setup.bash'
+[9.385s] INFO:colcon.colcon_core.shell:Creating prefix chain script '/root/workspaces/ros2_ws/install/setup.bash'
+[9.406s] INFO:colcon.colcon_core.shell:Creating prefix script '/root/workspaces/ros2_ws/install/local_setup.zsh'
+[9.425s] INFO:colcon.colcon_core.shell:Creating prefix chain script '/root/workspaces/ros2_ws/install/setup.zsh'

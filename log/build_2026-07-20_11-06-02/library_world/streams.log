@@ -1,0 +1,168 @@
+[0.143s] Invoking command in '/root/workspaces/ros2_ws/build/library_world': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/jazzy /usr/bin/cmake /root/workspaces/ros2_ws/src/ai-worker-sim/library_world -DCMAKE_INSTALL_PREFIX=/root/workspaces/ros2_ws/install/library_world
+[0.394s] -- The C compiler identification is GNU 13.3.0
+[0.618s] -- The CXX compiler identification is GNU 13.3.0
+[0.691s] -- Detecting C compiler ABI info
+[1.563s] -- Detecting C compiler ABI info - done
+[1.575s] -- Check for working C compiler: /usr/bin/cc - skipped
+[1.575s] -- Detecting C compile features
+[1.576s] -- Detecting C compile features - done
+[1.653s] -- Detecting CXX compiler ABI info
+[2.570s] -- Detecting CXX compiler ABI info - done
+[2.584s] -- Check for working CXX compiler: /usr/bin/c++ - skipped
+[2.584s] -- Detecting CXX compile features
+[2.585s] -- Detecting CXX compile features - done
+[2.700s] -- Found ament_cmake: 2.5.6 (/opt/ros/jazzy/share/ament_cmake/cmake)
+[2.919s] -- Found Python3: /usr/bin/python3 (found version "3.12.3") found components: Interpreter 
+[3.750s] -- Found ament_lint_auto: 0.17.5 (/opt/ros/jazzy/share/ament_lint_auto/cmake)
+[4.900s] -- Added test 'flake8' to check Python code syntax and style conventions
+[4.910s] -- Configured 'flake8' exclude dirs and/or files: 
+[5.000s] -- Added test 'lint_cmake' to check CMake code style
+[5.058s] -- Added test 'pep257' to check Python code against some of the docstring style conventions in PEP 257
+[5.466s] -- Added test 'xmllint' to check XML markup files
+[5.663s] -- Configuring done (5.5s)
+[6.328s] -- Generating done (0.6s)
+[6.610s] -- Build files have been written to: /root/workspaces/ros2_ws/build/library_world
+[6.613s] Invoked command in '/root/workspaces/ros2_ws/build/library_world' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/jazzy /usr/bin/cmake /root/workspaces/ros2_ws/src/ai-worker-sim/library_world -DCMAKE_INSTALL_PREFIX=/root/workspaces/ros2_ws/install/library_world
+[6.617s] Invoking command in '/root/workspaces/ros2_ws/build/library_world': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/jazzy /usr/bin/cmake --build /root/workspaces/ros2_ws/build/library_world -- -j4 -l4
+[6.812s] Invoked command in '/root/workspaces/ros2_ws/build/library_world' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/jazzy /usr/bin/cmake --build /root/workspaces/ros2_ws/build/library_world -- -j4 -l4
+[6.812s] Invoking command in '/root/workspaces/ros2_ws/build/library_world': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/jazzy /usr/bin/cmake --install /root/workspaces/ros2_ws/build/library_world
+[6.833s] -- Install configuration: ""
+[6.833s] -- Installing: /root/workspaces/ros2_ws/install/library_world/share/library_world//launch
+[6.874s] -- Installing: /root/workspaces/ros2_ws/install/library_world/share/library_world//launch/library_world_launch.py
+[6.915s] -- Installing: /root/workspaces/ros2_ws/install/library_world/share/library_world//world
+[6.943s] -- Installing: /root/workspaces/ros2_ws/install/library_world/share/library_world//world/library.sdf
+[6.989s] -- Installing: /root/workspaces/ros2_ws/install/library_world/share/library_world//models
+[7.025s] -- Installing: /root/workspaces/ros2_ws/install/library_world/share/library_world//models/bookshelf_d
+[7.048s] -- Installing: /root/workspaces/ros2_ws/install/library_world/share/library_world//models/bookshelf_d/model.sdf
+[7.121s] -- Installing: /root/workspaces/ros2_ws/install/library_world/share/library_world//models/bookshelf_d/materials
+[7.136s] -- Installing: /root/workspaces/ros2_ws/install/library_world/share/library_world//models/bookshelf_d/materials/textures
+[7.197s] -- Installing: /root/workspaces/ros2_ws/install/library_world/share/library_world//models/bookshelf_d/materials/textures/aws_BookshelfB_01.png
+[7.260s] -- Installing: /root/workspaces/ros2_ws/install/library_world/share/library_world//models/bookshelf_d/materials/textures/aws_BookshelfB_02.png
+[7.336s] -- Installing: /root/workspaces/ros2_ws/install/library_world/share/library_world//models/bookshelf_d/model.config
+[7.360s] -- Installing: /root/workspaces/ros2_ws/install/library_world/share/library_world//models/bookshelf_d/meshes
+[7.413s] -- Installing: /root/workspaces/ros2_ws/install/library_world/share/library_world//models/bookshelf_d/meshes/SHELVES.dae
+[7.418s] -- Installing: /root/workspaces/ros2_ws/install/library_world/share/library_world//models/floor
+[7.434s] -- Installing: /root/workspaces/ros2_ws/install/library_world/share/library_world//models/floor/model.sdf
+[7.489s] -- Installing: /root/workspaces/ros2_ws/install/library_world/share/library_world//models/floor/materials
+[7.512s] -- Installing: /root/workspaces/ros2_ws/install/library_world/share/library_world//models/floor/materials/textures
+[7.527s] -- Installing: /root/workspaces/ros2_ws/install/library_world/share/library_world//models/floor/materials/textures/aws_FloorB_01.png
+[7.596s] -- Installing: /root/workspaces/ros2_ws/install/library_world/share/library_world//models/floor/model.config
+[7.641s] -- Installing: /root/workspaces/ros2_ws/install/library_world/share/library_world//models/floor/meshes
+[7.667s] -- Installing: /root/workspaces/ros2_ws/install/library_world/share/library_world//models/floor/meshes/floor_collision.DAE
+[7.709s] -- Installing: /root/workspaces/ros2_ws/install/library_world/share/library_world//models/floor/meshes/floor_visual.DAE
+[7.756s] -- Installing: /root/workspaces/ros2_ws/install/library_world/share/library_world//models/bookshelf_b
+[7.778s] -- Installing: /root/workspaces/ros2_ws/install/library_world/share/library_world//models/bookshelf_b/model.sdf
+[7.821s] -- Installing: /root/workspaces/ros2_ws/install/library_world/share/library_world//models/bookshelf_b/materials
+[7.844s] -- Installing: /root/workspaces/ros2_ws/install/library_world/share/library_world//models/bookshelf_b/materials/textures
+[7.868s] -- Installing: /root/workspaces/ros2_ws/install/library_world/share/library_world//models/bookshelf_b/materials/textures/aws_BookshelfA_02.png
+[7.972s] -- Installing: /root/workspaces/ros2_ws/install/library_world/share/library_world//models/bookshelf_b/materials/textures/aws_BookshelfA_03.png
+[8.041s] -- Installing: /root/workspaces/ros2_ws/install/library_world/share/library_world//models/bookshelf_b/materials/textures/aws_BookshelfA_01.png
+[8.148s] -- Installing: /root/workspaces/ros2_ws/install/library_world/share/library_world//models/bookshelf_b/model.config
+[8.195s] -- Installing: /root/workspaces/ros2_ws/install/library_world/share/library_world//models/bookshelf_b/meshes
+[8.218s] -- Installing: /root/workspaces/ros2_ws/install/library_world/share/library_world//models/bookshelf_b/meshes/bookshelfb_collision.DAE
+[8.272s] -- Installing: /root/workspaces/ros2_ws/install/library_world/share/library_world//models/bookshelf_b/meshes/bookshelfb_visual.DAE
+[8.412s] -- Installing: /root/workspaces/ros2_ws/install/library_world/share/library_world//models/bookshelf_e
+[8.430s] -- Installing: /root/workspaces/ros2_ws/install/library_world/share/library_world//models/bookshelf_e/model.sdf
+[8.468s] -- Installing: /root/workspaces/ros2_ws/install/library_world/share/library_world//models/bookshelf_e/materials
+[8.491s] -- Installing: /root/workspaces/ros2_ws/install/library_world/share/library_world//models/bookshelf_e/materials/textures
+[8.514s] -- Installing: /root/workspaces/ros2_ws/install/library_world/share/library_world//models/bookshelf_e/materials/textures/aws_BookshelfC_01.png
+[8.633s] -- Installing: /root/workspaces/ros2_ws/install/library_world/share/library_world//models/bookshelf_e/model.config
+[8.676s] -- Installing: /root/workspaces/ros2_ws/install/library_world/share/library_world//models/bookshelf_e/meshes
+[8.701s] -- Installing: /root/workspaces/ros2_ws/install/library_world/share/library_world//models/bookshelf_e/meshes/bookshelfe_collision.DAE
+[8.744s] -- Installing: /root/workspaces/ros2_ws/install/library_world/share/library_world//models/bookshelf_e/meshes/bookshelfe_visual.DAE
+[8.792s] -- Installing: /root/workspaces/ros2_ws/install/library_world/share/library_world//models/etgah_logo
+[8.812s] -- Installing: /root/workspaces/ros2_ws/install/library_world/share/library_world//models/etgah_logo/model.sdf
+[8.861s] -- Installing: /root/workspaces/ros2_ws/install/library_world/share/library_world//models/etgah_logo/materials
+[8.887s] -- Installing: /root/workspaces/ros2_ws/install/library_world/share/library_world//models/etgah_logo/materials/textures
+[8.911s] -- Installing: /root/workspaces/ros2_ws/install/library_world/share/library_world//models/etgah_logo/materials/textures/logo.png
+[8.978s] -- Installing: /root/workspaces/ros2_ws/install/library_world/share/library_world//models/etgah_logo/model.config
+[9.023s] -- Installing: /root/workspaces/ros2_ws/install/library_world/share/library_world//models/sofa
+[9.047s] -- Installing: /root/workspaces/ros2_ws/install/library_world/share/library_world//models/sofa/model.sdf
+[9.095s] -- Installing: /root/workspaces/ros2_ws/install/library_world/share/library_world//models/sofa/materials
+[9.119s] -- Installing: /root/workspaces/ros2_ws/install/library_world/share/library_world//models/sofa/materials/textures
+[9.141s] -- Installing: /root/workspaces/ros2_ws/install/library_world/share/library_world//models/sofa/materials/textures/Wood1.jpg
+[9.199s] -- Installing: /root/workspaces/ros2_ws/install/library_world/share/library_world//models/sofa/materials/textures/Wood_Fine_AI_03-CW.jpg
+[9.264s] -- Installing: /root/workspaces/ros2_ws/install/library_world/share/library_world//models/sofa/model.config
+[9.311s] -- Installing: /root/workspaces/ros2_ws/install/library_world/share/library_world//models/sofa/meshes
+[9.334s] -- Installing: /root/workspaces/ros2_ws/install/library_world/share/library_world//models/sofa/meshes/Sofa3
+[9.358s] -- Installing: /root/workspaces/ros2_ws/install/library_world/share/library_world//models/sofa/meshes/Sofa3/Wood1.jpg
+[9.429s] -- Installing: /root/workspaces/ros2_ws/install/library_world/share/library_world//models/sofa/meshes/Sofa3/Wood_Fine_AI_03-CW.jpg
+[9.498s] -- Installing: /root/workspaces/ros2_ws/install/library_world/share/library_world//models/sofa/meshes/sofa.dae
+[9.618s] -- Installing: /root/workspaces/ros2_ws/install/library_world/share/library_world//models/bookshelf
+[9.640s] -- Installing: /root/workspaces/ros2_ws/install/library_world/share/library_world//models/bookshelf/model.sdf
+[9.689s] -- Installing: /root/workspaces/ros2_ws/install/library_world/share/library_world//models/bookshelf/materials
+[9.715s] -- Installing: /root/workspaces/ros2_ws/install/library_world/share/library_world//models/bookshelf/materials/textures
+[9.748s] -- Installing: /root/workspaces/ros2_ws/install/library_world/share/library_world//models/bookshelf/materials/textures/aws_BookshelfB_01.png
+[9.911s] -- Installing: /root/workspaces/ros2_ws/install/library_world/share/library_world//models/bookshelf/materials/textures/aws_BookshelfB_02.png
+[9.957s] -- Installing: /root/workspaces/ros2_ws/install/library_world/share/library_world//models/bookshelf/model.config
+[10.003s] -- Installing: /root/workspaces/ros2_ws/install/library_world/share/library_world//models/bookshelf/meshes
+[10.037s] -- Installing: /root/workspaces/ros2_ws/install/library_world/share/library_world//models/bookshelf/meshes/bookshelf_collision.DAE
+[10.074s] -- Installing: /root/workspaces/ros2_ws/install/library_world/share/library_world//models/bookshelf/meshes/bookshelf_visual.DAE
+[10.146s] -- Installing: /root/workspaces/ros2_ws/install/library_world/share/library_world//models/house_wall
+[10.156s] -- Installing: /root/workspaces/ros2_ws/install/library_world/share/library_world//models/house_wall/model.sdf
+[10.199s] -- Installing: /root/workspaces/ros2_ws/install/library_world/share/library_world//models/house_wall/materials
+[10.221s] -- Installing: /root/workspaces/ros2_ws/install/library_world/share/library_world//models/house_wall/materials/textures
+[10.268s] -- Installing: /root/workspaces/ros2_ws/install/library_world/share/library_world//models/house_wall/materials/textures/aws_HouseWallB_01.png
+[10.316s] -- Installing: /root/workspaces/ros2_ws/install/library_world/share/library_world//models/house_wall/model.config
+[10.355s] -- Installing: /root/workspaces/ros2_ws/install/library_world/share/library_world//models/house_wall/meshes
+[10.368s] -- Installing: /root/workspaces/ros2_ws/install/library_world/share/library_world//models/house_wall/meshes/house_wall_collision.DAE
+[10.430s] -- Installing: /root/workspaces/ros2_ws/install/library_world/share/library_world//models/house_wall/meshes/house_wall_visual.DAE
+[10.496s] -- Installing: /root/workspaces/ros2_ws/install/library_world/share/library_world//models/book
+[10.502s] -- Installing: /root/workspaces/ros2_ws/install/library_world/share/library_world//models/book/model.sdf
+[10.546s] -- Installing: /root/workspaces/ros2_ws/install/library_world/share/library_world//models/book/materials
+[10.573s] -- Installing: /root/workspaces/ros2_ws/install/library_world/share/library_world//models/book/materials/textures
+[10.594s] -- Installing: /root/workspaces/ros2_ws/install/library_world/share/library_world//models/book/materials/textures/aws_BookD_01.png
+[10.639s] -- Installing: /root/workspaces/ros2_ws/install/library_world/share/library_world//models/book/model.config
+[10.690s] -- Installing: /root/workspaces/ros2_ws/install/library_world/share/library_world//models/book/meshes
+[10.706s] -- Installing: /root/workspaces/ros2_ws/install/library_world/share/library_world//models/book/meshes/book_visual.DAE
+[10.764s] -- Installing: /root/workspaces/ros2_ws/install/library_world/share/library_world//models/book/meshes/book_collision.DAE
+[10.810s] -- Installing: /root/workspaces/ros2_ws/install/library_world/share/library_world//models/bookcase
+[10.827s] -- Installing: /root/workspaces/ros2_ws/install/library_world/share/library_world//models/bookcase/model.sdf
+[10.873s] -- Installing: /root/workspaces/ros2_ws/install/library_world/share/library_world//models/bookcase/model.config
+[10.919s] -- Installing: /root/workspaces/ros2_ws/install/library_world/share/library_world//models/bookcase/meshes
+[10.969s] -- Installing: /root/workspaces/ros2_ws/install/library_world/share/library_world//models/bookcase/meshes/bookcase.dae
+[10.994s] -- Installing: /root/workspaces/ros2_ws/install/library_world/share/library_world//models/desk
+[11.028s] -- Installing: /root/workspaces/ros2_ws/install/library_world/share/library_world//models/desk/model.sdf
+[11.053s] -- Installing: /root/workspaces/ros2_ws/install/library_world/share/library_world//models/desk/materials
+[11.102s] -- Installing: /root/workspaces/ros2_ws/install/library_world/share/library_world//models/desk/materials/textures
+[11.151s] -- Installing: /root/workspaces/ros2_ws/install/library_world/share/library_world//models/desk/materials/textures/aws_DeskB_01.png
+[11.219s] -- Installing: /root/workspaces/ros2_ws/install/library_world/share/library_world//models/desk/model.config
+[11.269s] -- Installing: /root/workspaces/ros2_ws/install/library_world/share/library_world//models/desk/meshes
+[11.302s] -- Installing: /root/workspaces/ros2_ws/install/library_world/share/library_world//models/desk/meshes/desk_visual.DAE
+[11.353s] -- Installing: /root/workspaces/ros2_ws/install/library_world/share/library_world//models/desk/meshes/desk_collision.DAE
+[11.403s] -- Installing: /root/workspaces/ros2_ws/install/library_world/share/library_world//models/chair
+[11.435s] -- Installing: /root/workspaces/ros2_ws/install/library_world/share/library_world//models/chair/model.sdf
+[11.476s] -- Installing: /root/workspaces/ros2_ws/install/library_world/share/library_world//models/chair/materials
+[11.508s] -- Installing: /root/workspaces/ros2_ws/install/library_world/share/library_world//models/chair/materials/textures
+[11.533s] -- Installing: /root/workspaces/ros2_ws/install/library_world/share/library_world//models/chair/materials/textures/aws_ChairB_01.png
+[11.642s] -- Installing: /root/workspaces/ros2_ws/install/library_world/share/library_world//models/chair/model.config
+[11.691s] -- Installing: /root/workspaces/ros2_ws/install/library_world/share/library_world//models/chair/meshes
+[11.714s] -- Installing: /root/workspaces/ros2_ws/install/library_world/share/library_world//models/chair/meshes/chair_visual.DAE
+[11.781s] -- Installing: /root/workspaces/ros2_ws/install/library_world/share/library_world//models/chair/meshes/chair_collision.DAE
+[11.828s] -- Installing: /root/workspaces/ros2_ws/install/library_world/share/library_world//models/bookshelf_c
+[11.849s] -- Installing: /root/workspaces/ros2_ws/install/library_world/share/library_world//models/bookshelf_c/model.sdf
+[11.891s] -- Installing: /root/workspaces/ros2_ws/install/library_world/share/library_world//models/bookshelf_c/materials
+[11.923s] -- Installing: /root/workspaces/ros2_ws/install/library_world/share/library_world//models/bookshelf_c/materials/textures
+[11.952s] -- Installing: /root/workspaces/ros2_ws/install/library_world/share/library_world//models/bookshelf_c/materials/textures/aws_DeskA_02.png
+[12.041s] -- Installing: /root/workspaces/ros2_ws/install/library_world/share/library_world//models/bookshelf_c/materials/textures/aws_DeskA_01.png
+[12.141s] -- Installing: /root/workspaces/ros2_ws/install/library_world/share/library_world//models/bookshelf_c/materials/textures/aws_DeskA_03.png
+[12.197s] -- Installing: /root/workspaces/ros2_ws/install/library_world/share/library_world//models/bookshelf_c/model.config
+[12.248s] -- Installing: /root/workspaces/ros2_ws/install/library_world/share/library_world//models/bookshelf_c/meshes
+[12.272s] -- Installing: /root/workspaces/ros2_ws/install/library_world/share/library_world//models/bookshelf_c/meshes/aws_DeskA_01_collision.DAE
+[12.335s] -- Installing: /root/workspaces/ros2_ws/install/library_world/share/library_world//models/bookshelf_c/meshes/aws_DeskA_01_visual.DAE
+[12.487s] -- Installing: /root/workspaces/ros2_ws/install/library_world/share/ament_index/resource_index/package_run_dependencies/library_world
+[12.554s] -- Installing: /root/workspaces/ros2_ws/install/library_world/share/ament_index/resource_index/parent_prefix_path/library_world
+[12.625s] -- Installing: /root/workspaces/ros2_ws/install/library_world/share/library_world/environment/ament_prefix_path.sh
+[12.668s] -- Installing: /root/workspaces/ros2_ws/install/library_world/share/library_world/environment/ament_prefix_path.dsv
+[12.714s] -- Installing: /root/workspaces/ros2_ws/install/library_world/share/library_world/environment/path.sh
+[12.766s] -- Installing: /root/workspaces/ros2_ws/install/library_world/share/library_world/environment/path.dsv
+[12.831s] -- Installing: /root/workspaces/ros2_ws/install/library_world/share/library_world/local_setup.bash
+[12.883s] -- Installing: /root/workspaces/ros2_ws/install/library_world/share/library_world/local_setup.sh
+[12.945s] -- Installing: /root/workspaces/ros2_ws/install/library_world/share/library_world/local_setup.zsh
+[13.000s] -- Installing: /root/workspaces/ros2_ws/install/library_world/share/library_world/local_setup.dsv
+[13.050s] -- Installing: /root/workspaces/ros2_ws/install/library_world/share/library_world/package.dsv
+[13.125s] -- Installing: /root/workspaces/ros2_ws/install/library_world/share/ament_index/resource_index/packages/library_world
+[13.172s] -- Installing: /root/workspaces/ros2_ws/install/library_world/share/library_world/cmake/library_worldConfig.cmake
+[13.239s] -- Installing: /root/workspaces/ros2_ws/install/library_world/share/library_world/cmake/library_worldConfig-version.cmake
+[13.278s] -- Installing: /root/workspaces/ros2_ws/install/library_world/share/library_world/package.xml
+[13.338s] Invoked command in '/root/workspaces/ros2_ws/build/library_world' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/jazzy /usr/bin/cmake --install /root/workspaces/ros2_ws/build/library_world

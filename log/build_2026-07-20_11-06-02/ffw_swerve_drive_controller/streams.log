@@ -1,0 +1,123 @@
+[0.375s] Invoking command in '/root/workspaces/ros2_ws/build/ffw_swerve_drive_controller': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/jazzy /usr/bin/cmake /root/workspaces/ros2_ws/src/ai-worker-sim/ffw_swerve_drive_controller -DCMAKE_INSTALL_PREFIX=/root/workspaces/ros2_ws/install/ffw_swerve_drive_controller
+[0.610s] -- The C compiler identification is GNU 13.3.0
+[0.841s] -- The CXX compiler identification is GNU 13.3.0
+[0.923s] -- Detecting C compiler ABI info
+[1.824s] -- Detecting C compiler ABI info - done
+[1.841s] -- Check for working C compiler: /usr/bin/cc - skipped
+[1.856s] -- Detecting C compile features
+[1.862s] -- Detecting C compile features - done
+[1.910s] -- Detecting CXX compiler ABI info
+[2.805s] -- Detecting CXX compiler ABI info - done
+[2.818s] -- Check for working CXX compiler: /usr/bin/c++ - skipped
+[2.818s] -- Detecting CXX compile features
+[2.819s] -- Detecting CXX compile features - done
+[2.931s] -- Found ament_cmake: 2.5.6 (/opt/ros/jazzy/share/ament_cmake/cmake)
+[3.243s] -- Found Python3: /usr/bin/python3 (found version "3.12.3") found components: Interpreter 
+[4.322s] -- Found controller_interface: 4.45.2 (/opt/ros/jazzy/share/controller_interface/cmake)
+[4.894s] -- Found rosidl_generator_c: 4.6.9 (/opt/ros/jazzy/share/rosidl_generator_c/cmake)
+[5.011s] -- Found rosidl_generator_cpp: 4.6.9 (/opt/ros/jazzy/share/rosidl_generator_cpp/cmake)
+[5.174s] -- Using all available rosidl_typesupport_c: rosidl_typesupport_fastrtps_c;rosidl_typesupport_introspection_c
+[5.348s] -- Using all available rosidl_typesupport_cpp: rosidl_typesupport_fastrtps_cpp;rosidl_typesupport_introspection_cpp
+[6.345s] -- Found TinyXML2 via Config file: /usr/lib/x86_64-linux-gnu/cmake/tinyxml2
+[6.681s] -- Found rmw_implementation_cmake: 7.3.3 (/opt/ros/jazzy/share/rmw_implementation_cmake/cmake)
+[6.727s] -- Found rmw_fastrtps_cpp: 8.4.4 (/opt/ros/jazzy/share/rmw_fastrtps_cpp/cmake)
+[6.904s] -- Found TinyXML2 via Config file: /usr/lib/x86_64-linux-gnu/cmake/tinyxml2
+[6.977s] -- Found OpenSSL: /usr/lib/x86_64-linux-gnu/libcrypto.so (found version "3.0.13")  
+[6.978s] -- Found TinyXML2 via Config file: /usr/lib/x86_64-linux-gnu/cmake/tinyxml2
+[7.008s] -- Found FastRTPS: /opt/ros/jazzy/include (Required is at least version "2.13") 
+[7.034s] -- Found TinyXML2 via Config file: /usr/lib/x86_64-linux-gnu/cmake/tinyxml2
+[7.048s] -- Found TinyXML2 via Config file: /usr/lib/x86_64-linux-gnu/cmake/tinyxml2
+[7.048s] -- Using RMW implementation 'rmw_fastrtps_cpp' as default
+[9.127s] -- Found generate_parameter_library: 0.7.3 (/opt/ros/jazzy/share/generate_parameter_library/cmake)
+[9.208s] -- Found parameter_traits: 0.7.3 (/opt/ros/jazzy/share/parameter_traits/cmake)
+[9.463s] [0mCMake Deprecation Warning at /opt/ros/jazzy/share/tl_expected/cmake/tl_expectedConfig.cmake:37 (message):
+[9.463s]   Package 'tl_expected' is deprecated (This package will be removed in ROS 2
+[9.463s]   Lyrical Luth.
+[9.463s] 
+[9.463s]         Use tl/expected.hpp from libexpected-dev,
+[9.463s]         or rcpputils/tl_expected/expected.hpp if the system header is not available)
+[9.463s] Call Stack (most recent call first):
+[9.463s]   /opt/ros/jazzy/share/parameter_traits/cmake/ament_cmake_export_dependencies-extras.cmake:21 (find_package)
+[9.463s]   /opt/ros/jazzy/share/parameter_traits/cmake/parameter_traitsConfig.cmake:41 (include)
+[9.463s]   /opt/ros/jazzy/share/generate_parameter_library/cmake/generate_parameter_library-extras.cmake:30 (find_package)
+[9.463s]   /opt/ros/jazzy/share/generate_parameter_library/cmake/generate_parameter_libraryConfig.cmake:41 (include)
+[9.463s]   CMakeLists.txt:31 (find_package)
+[9.463s] 
+[9.463s] [0m
+[9.507s] -- Found nav_msgs: 5.3.8 (/opt/ros/jazzy/share/nav_msgs/cmake)
+[9.585s] -- Found std_srvs: 5.3.8 (/opt/ros/jazzy/share/std_srvs/cmake)
+[9.655s] -- Found tf2: 0.36.21 (/opt/ros/jazzy/share/tf2/cmake)
+[9.717s] -- Found tf2_geometry_msgs: 0.36.21 (/opt/ros/jazzy/share/tf2_geometry_msgs/cmake)
+[9.882s] -- Found eigen3_cmake_module: 0.3.1 (/opt/ros/jazzy/share/eigen3_cmake_module/cmake)
+[9.883s] -- Found Eigen3: TRUE (found version "3.4.0") 
+[9.883s] -- Ensuring Eigen3 include directory is part of orocos-kdl CMake target
+[10.256s] -- Found visualization_msgs: 5.3.8 (/opt/ros/jazzy/share/visualization_msgs/cmake)
+[10.383s] -- Found ament_lint_auto: 0.17.5 (/opt/ros/jazzy/share/ament_lint_auto/cmake)
+[11.737s] -- Added test 'cppcheck' to perform static code analysis on C / C++ code
+[11.738s] -- Configured cppcheck include dirs: $<BUILD_INTERFACE:/root/workspaces/ros2_ws/src/ai-worker-sim/ffw_swerve_drive_controller/include>
+[11.738s] -- Configured cppcheck exclude dirs and/or files: 
+[11.768s] -- Added test 'lint_cmake' to check CMake code style
+[11.821s] -- Added test 'uncrustify' to check C / C++ code style
+[11.839s] -- Configured uncrustify additional arguments: 
+[11.853s] -- Added test 'xmllint' to check XML markup files
+[12.428s] -- Configuring done (12.0s)
+[13.600s] -- Generating done (1.1s)
+[13.991s] -- Build files have been written to: /root/workspaces/ros2_ws/build/ffw_swerve_drive_controller
+[14.005s] Invoked command in '/root/workspaces/ros2_ws/build/ffw_swerve_drive_controller' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/jazzy /usr/bin/cmake /root/workspaces/ros2_ws/src/ai-worker-sim/ffw_swerve_drive_controller -DCMAKE_INSTALL_PREFIX=/root/workspaces/ros2_ws/install/ffw_swerve_drive_controller
+[14.009s] Invoking command in '/root/workspaces/ros2_ws/build/ffw_swerve_drive_controller': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/jazzy /usr/bin/cmake --build /root/workspaces/ros2_ws/build/ffw_swerve_drive_controller -- -j4 -l4
+[14.171s] [ 14%] [34m[1mRunning `/opt/ros/jazzy/bin/generate_parameter_library_cpp /root/workspaces/ros2_ws/build/ffw_swerve_drive_controller/include/ffw_swerve_drive_controller/swerve_drive_controller_parameter.hpp /root/workspaces/ros2_ws/src/ai-worker-sim/ffw_swerve_drive_controller/config/swerve_drive_controller_parameter.yaml `[0m
+[15.642s] [ 28%] [34m[1mCreating deprecated header file /root/workspaces/ros2_ws/build/ffw_swerve_drive_controller/include/swerve_drive_controller_parameter.hpp[0m
+[15.724s] [ 28%] Built target swerve_drive_controller_parameter
+[15.830s] [ 85%] [32mBuilding CXX object CMakeFiles/ffw_swerve_drive_controller.dir/src/swerve_drive_controller.cpp.o[0m
+[15.830s] [ 85%] [32mBuilding CXX object CMakeFiles/ffw_swerve_drive_controller.dir/src/odometry.cpp.o[0m
+[15.830s] [ 85%] [32mBuilding CXX object CMakeFiles/ffw_swerve_drive_controller.dir/src/marker_visualize.cpp.o[0m
+[15.830s] [ 85%] [32mBuilding CXX object CMakeFiles/ffw_swerve_drive_controller.dir/src/speed_limiter.cpp.o[0m
+[21.110s] In file included from [01m[K/opt/ros/jazzy/include/parameter_traits/parameter_traits/parameter_traits.hpp:37[m[K,
+[21.110s]                  from [01m[K/root/workspaces/ros2_ws/build/ffw_swerve_drive_controller/include/ffw_swerve_drive_controller/swerve_drive_controller_parameter.hpp:26[m[K,
+[21.110s]                  from [01m[K/root/workspaces/ros2_ws/src/ai-worker-sim/ffw_swerve_drive_controller/include/ffw_swerve_drive_controller/swerve_drive_controller.hpp:54[m[K,
+[21.110s]                  from [01m[K/root/workspaces/ros2_ws/src/ai-worker-sim/ffw_swerve_drive_controller/src/swerve_drive_controller.cpp:19[m[K:
+[21.110s] [01m[K/opt/ros/jazzy/include/tl_expected/expected.hpp:18:167:[m[K [01;36m[Knote: [m[K‘[01m[K#pragma message: tl_expected/expected.hpp is deprecated. Use <tl/expected.hpp> from libexpected-dev, or <rcpputils/tl_expected/expected.hpp> if the system header is not available.[m[K’
+[21.110s]    18 |   "tl_expected/expected.hpp is deprecated. Use <tl/expected.hpp> from libexpected-dev, or <rcpputils/tl_expected/expected.hpp> if the system header is not available."[01;36m[K)[m[K // NOLINT
+[21.110s]       |                                                                                                                                                                       [01;36m[K^[m[K
+[37.592s] [100%] [32m[1mLinking CXX shared library libffw_swerve_drive_controller.so[0m
+[42.309s] [100%] Built target ffw_swerve_drive_controller
+[42.379s] Invoked command in '/root/workspaces/ros2_ws/build/ffw_swerve_drive_controller' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/jazzy /usr/bin/cmake --build /root/workspaces/ros2_ws/build/ffw_swerve_drive_controller -- -j4 -l4
+[42.395s] Invoking command in '/root/workspaces/ros2_ws/build/ffw_swerve_drive_controller': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/jazzy /usr/bin/cmake --install /root/workspaces/ros2_ws/build/ffw_swerve_drive_controller
+[42.444s] -- Install configuration: ""
+[42.463s] -- Installing: /root/workspaces/ros2_ws/install/ffw_swerve_drive_controller/include/ffw_swerve_drive_controller
+[42.489s] -- Installing: /root/workspaces/ros2_ws/install/ffw_swerve_drive_controller/include/ffw_swerve_drive_controller/swerve_drive_controller_parameter.hpp
+[42.557s] -- Installing: /root/workspaces/ros2_ws/install/ffw_swerve_drive_controller/share/ffw_swerve_drive_controller/ffw_swerve_drive_controller.xml
+[42.610s] -- Up-to-date: /root/workspaces/ros2_ws/install/ffw_swerve_drive_controller/include
+[42.629s] -- Up-to-date: /root/workspaces/ros2_ws/install/ffw_swerve_drive_controller/include/ffw_swerve_drive_controller
+[42.644s] -- Installing: /root/workspaces/ros2_ws/install/ffw_swerve_drive_controller/include/ffw_swerve_drive_controller/speed_limiter.hpp
+[42.680s] -- Installing: /root/workspaces/ros2_ws/install/ffw_swerve_drive_controller/include/ffw_swerve_drive_controller/swerve_drive_controller.hpp
+[42.731s] -- Installing: /root/workspaces/ros2_ws/install/ffw_swerve_drive_controller/include/ffw_swerve_drive_controller/odometry.hpp
+[42.779s] -- Installing: /root/workspaces/ros2_ws/install/ffw_swerve_drive_controller/include/ffw_swerve_drive_controller/marker_visualize.hpp
+[42.846s] -- Installing: /root/workspaces/ros2_ws/install/ffw_swerve_drive_controller/lib/libffw_swerve_drive_controller.so
+[43.154s] -- Set non-toolchain portion of runtime path of "/root/workspaces/ros2_ws/install/ffw_swerve_drive_controller/lib/libffw_swerve_drive_controller.so" to ""
+[43.165s] -- Up-to-date: /root/workspaces/ros2_ws/install/ffw_swerve_drive_controller/share/ffw_swerve_drive_controller/ffw_swerve_drive_controller.xml
+[43.189s] -- Installing: /root/workspaces/ros2_ws/install/ffw_swerve_drive_controller/share/ffw_swerve_drive_controller/environment/library_path.sh
+[43.236s] -- Installing: /root/workspaces/ros2_ws/install/ffw_swerve_drive_controller/share/ffw_swerve_drive_controller/environment/library_path.dsv
+[43.330s] -- Installing: /root/workspaces/ros2_ws/install/ffw_swerve_drive_controller/share/ament_index/resource_index/package_run_dependencies/ffw_swerve_drive_controller
+[43.389s] -- Installing: /root/workspaces/ros2_ws/install/ffw_swerve_drive_controller/share/ament_index/resource_index/parent_prefix_path/ffw_swerve_drive_controller
+[43.441s] -- Installing: /root/workspaces/ros2_ws/install/ffw_swerve_drive_controller/share/ffw_swerve_drive_controller/environment/ament_prefix_path.sh
+[43.489s] -- Installing: /root/workspaces/ros2_ws/install/ffw_swerve_drive_controller/share/ffw_swerve_drive_controller/environment/ament_prefix_path.dsv
+[43.542s] -- Installing: /root/workspaces/ros2_ws/install/ffw_swerve_drive_controller/share/ffw_swerve_drive_controller/environment/path.sh
+[43.592s] -- Installing: /root/workspaces/ros2_ws/install/ffw_swerve_drive_controller/share/ffw_swerve_drive_controller/environment/path.dsv
+[43.645s] -- Installing: /root/workspaces/ros2_ws/install/ffw_swerve_drive_controller/share/ffw_swerve_drive_controller/local_setup.bash
+[43.697s] -- Installing: /root/workspaces/ros2_ws/install/ffw_swerve_drive_controller/share/ffw_swerve_drive_controller/local_setup.sh
+[43.753s] -- Installing: /root/workspaces/ros2_ws/install/ffw_swerve_drive_controller/share/ffw_swerve_drive_controller/local_setup.zsh
+[43.811s] -- Installing: /root/workspaces/ros2_ws/install/ffw_swerve_drive_controller/share/ffw_swerve_drive_controller/local_setup.dsv
+[43.870s] -- Installing: /root/workspaces/ros2_ws/install/ffw_swerve_drive_controller/share/ffw_swerve_drive_controller/package.dsv
+[43.947s] -- Installing: /root/workspaces/ros2_ws/install/ffw_swerve_drive_controller/share/ament_index/resource_index/packages/ffw_swerve_drive_controller
+[44.019s] -- Installing: /root/workspaces/ros2_ws/install/ffw_swerve_drive_controller/share/ament_index/resource_index/controller_interface__pluginlib__plugin/ffw_swerve_drive_controller
+[44.090s] -- Installing: /root/workspaces/ros2_ws/install/ffw_swerve_drive_controller/share/ffw_swerve_drive_controller/cmake/export_ffw_swerve_drive_controllerExport.cmake
+[44.148s] -- Installing: /root/workspaces/ros2_ws/install/ffw_swerve_drive_controller/share/ffw_swerve_drive_controller/cmake/export_ffw_swerve_drive_controllerExport-noconfig.cmake
+[44.203s] -- Installing: /root/workspaces/ros2_ws/install/ffw_swerve_drive_controller/share/ffw_swerve_drive_controller/cmake/ament_cmake_export_dependencies-extras.cmake
+[44.258s] -- Installing: /root/workspaces/ros2_ws/install/ffw_swerve_drive_controller/share/ffw_swerve_drive_controller/cmake/ament_cmake_export_include_directories-extras.cmake
+[44.317s] -- Installing: /root/workspaces/ros2_ws/install/ffw_swerve_drive_controller/share/ffw_swerve_drive_controller/cmake/ament_cmake_export_libraries-extras.cmake
+[44.373s] -- Installing: /root/workspaces/ros2_ws/install/ffw_swerve_drive_controller/share/ffw_swerve_drive_controller/cmake/ament_cmake_export_targets-extras.cmake
+[44.436s] -- Installing: /root/workspaces/ros2_ws/install/ffw_swerve_drive_controller/share/ffw_swerve_drive_controller/cmake/ffw_swerve_drive_controllerConfig.cmake
+[44.489s] -- Installing: /root/workspaces/ros2_ws/install/ffw_swerve_drive_controller/share/ffw_swerve_drive_controller/cmake/ffw_swerve_drive_controllerConfig-version.cmake
+[44.545s] -- Installing: /root/workspaces/ros2_ws/install/ffw_swerve_drive_controller/share/ffw_swerve_drive_controller/package.xml
+[44.605s] Invoked command in '/root/workspaces/ros2_ws/build/ffw_swerve_drive_controller' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/jazzy /usr/bin/cmake --install /root/workspaces/ros2_ws/build/ffw_swerve_drive_controller
