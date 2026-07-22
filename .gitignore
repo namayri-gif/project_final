@@ -1,0 +1,31 @@
+# Ignore build and install artifacts
+build/
+install/
+log/
+
+# Ignore Python cache
+__pycache__/
+*.py[cod]
+*.pyc
+*.pyo
+*.pyd
+
+# Ignore ROS local setup utilities and temporary files
+*.swp
+*.swo
+*.bak
+*~
+
+# Ignore VS Code files
+.vscode/
+
+# Ignore egg-info directories
+*.egg-info/
+
+# Ignore compiled object files
+*.o
+*.obj
+*.so
+*.dll
+*.exe
+*.log
