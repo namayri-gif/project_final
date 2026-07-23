@@ -174,7 +174,7 @@
     </sensor>
   </gazebo>
   <!-- RealSense D405 Left Camera (on arm_l_link7) -->
-  <!-- <gazebo reference="camera_l_link">
+  <gazebo reference="camera_l_link">
     <sensor name="camera_l_rgb" type="camera">
       <always_on>true</always_on>
       <update_rate>30.0</update_rate>
@@ -217,7 +217,7 @@
         </clip>
       </camera>
     </sensor>
-  </gazebo> -->
+  </gazebo>
 
   <!-- RealSense D405 Right Camera (on arm_r_link7) -->
   <!-- <gazebo reference="camera_r_link">
@@ -266,7 +266,7 @@
   </gazebo> -->
 
  <!-- ZED Mini Camera (single RGB) -->
-  <!-- <gazebo reference="zedm_camera_center">
+  <gazebo reference="zedm_camera_center">
     <sensor name="zedm" type="camera">
       <always_on>true</always_on>
       <update_rate>30.0</update_rate>
@@ -312,7 +312,7 @@
       </lens>
     </camera>
   </sensor>
-  </gazebo> -->
+  </gazebo>
  
   </xacro:macro>
 

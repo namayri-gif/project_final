@@ -29,6 +29,17 @@ def generate_launch_description():
     os.environ.setdefault('GZ_SIM_RESOURCE_PATH', '')
     os.environ['GZ_SIM_RESOURCE_PATH'] += os.pathsep + pkg_navigation
 
+    # Find the installation path of the target package
+    human_detector_pkg_dir = get_package_share_directory('human_detector')
+    
+    # Path to the specific launch file you want to run
+    launch_file_path = os.path.join(human_detector_pkg_dir, 'launch', 'human_detector.launch.py')
+    
+    # Include the file in your deployment
+    included_launch = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(launch_file_path),
+    )
+
     rviz_launch_arg = DeclareLaunchArgument(
         'rviz',
         default_value='true',

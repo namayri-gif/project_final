@@ -28,6 +28,7 @@ setup(
     entry_points={
         'console_scripts': [
              'person_detector_node = human_detector.person_detector_node:main',
+             'wave_interact = human_detector.wave_interact:main',
         ],
     },
 )
