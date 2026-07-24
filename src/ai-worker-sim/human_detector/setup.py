@@ -25,6 +25,11 @@ setup(
             'share/human_detector/launch',
             glob('launch/*.launch.py'),
         ),
+
+        (
+            'share/human_detector/config',
+            glob('config/*.yaml'),
+        ),
     ],
 
     

@@ -1,12 +1,14 @@
 import copy
+import os
 import threading
 
 import rclpy
-
 from action_msgs.msg import GoalStatus
+from ament_index_python.packages import get_package_share_directory
 from geometry_msgs.msg import PoseStamped
 from moveit.core.robot_state import RobotState
 from moveit.planning import MoveItPy
+from moveit_configs_utils import MoveItConfigsBuilder
 from nav2_msgs.action import NavigateToPose
 from rclpy.action import ActionClient
 from rclpy.callback_groups import ReentrantCallbackGroup
@@ -26,26 +28,7 @@ ARM_R_JOINT_NAMES = [
 ]
 
 
-# Same values as the existing "ready" state in ffw.srdf.
-READY_POSITIONS = [
-    -2.0005,
-    -0.7693,
-    1.9266,
-    -1.8409,
-    2.9385,
-    0.5668,
-    -1.4242,
-]
-
-
-# Wave positions based on the ready pose.
-# Only joint 7 moves.
-#
-# These values replace the missing SRDF states:
-#   wave_left
-#   wave_right
-#
-# Both targets remain close to the valid ready value of -1.4242.
+# Wave targets based on the existing arm_r "ready" SRDF state.
 WAVE_LEFT_POSITIONS = [
     -2.0005,
     -0.7693,
@@ -68,7 +51,6 @@ WAVE_RIGHT_POSITIONS = [
 
 
 class WaveInteraction(Node):
-
     STATE_IDLE = 'idle'
     STATE_SENDING = 'sending'
     STATE_NAVIGATING = 'navigating'
@@ -84,10 +66,21 @@ class WaveInteraction(Node):
     def __init__(self):
         super().__init__('wave_interaction')
 
+<<<<<<< HEAD
 
 
+=======
+>>>>>>> 63cbe71 (Merge remote changes and update project)
         self.callback_group = ReentrantCallbackGroup()
         self.state_lock = threading.RLock()
+
+        self.interaction_state = self.STATE_IDLE
+        self.goal_handle = None
+        self.current_goal_pose = None
+        self.goal_sequence = 0
+        self.active_goal_sequence = None
+        self.person_latched = False
+        self.wave_thread = None
 
         # ---------------- Nav2 client ----------------
 
@@ -98,9 +91,8 @@ class WaveInteraction(Node):
             callback_group=self.callback_group,
         )
 
-        # This node must own the Nav2 goal so it can store, cancel, and resume it.
-        # Publish PoseStamped goals to /interaction_goal_pose instead of sending
-        # them directly to Nav2 from another node.
+        # Goals must enter through this topic so this node owns the Nav2
+        # goal handle and can safely cancel and resume it.
         self.create_subscription(
             PoseStamped,
             '/interaction_goal_pose',
@@ -109,22 +101,7 @@ class WaveInteraction(Node):
             callback_group=self.callback_group,
         )
 
-        self.goal_handle = None
-        self.current_goal_pose = None
-
-        self.interaction_state = self.STATE_IDLE
-
-        # Each sent goal gets a sequence number. Delayed callbacks belonging
-        # to an older cancelled goal are ignored after the goal is resumed.
-        self.goal_sequence = 0
-        self.active_goal_sequence = None
-
-        # ---------------- Person detection ----------------
-
-        # The latch remains true while the detector continuously publishes True.
-        # Navigation can resume immediately after waving; additional True
-        # messages are ignored until the detector eventually publishes False.
-        self.person_latched = False
+        # ---------------- Detection and standalone test ----------------
 
         self.create_subscription(
             Bool,
@@ -134,25 +111,97 @@ class WaveInteraction(Node):
             callback_group=self.callback_group,
         )
 
-        self.wave_thread = None
+        # Publish True here to test the complete wave without Nav2.
+        self.create_subscription(
+            Bool,
+            '/wave_command',
+            self._wave_command_cb,
+            10,
+            callback_group=self.callback_group,
+        )
 
-        # ---------------- MoveIt ----------------
+        # ---------------- MoveItPy ----------------
+
+        self.get_logger().info('Building MoveItPy configuration...')
+        moveit_config = self._build_moveit_config()
 
         self.get_logger().info('Creating MoveItPy instance...')
-
         self.moveit = MoveItPy(
             node_name='wave_interaction_moveit',
+            config_dict=moveit_config,
         )
 
         self.robot_model = self.moveit.get_robot_model()
-
-        # Keep the arm and hand as separate planning components.
         self.arm = self.moveit.get_planning_component('arm_r')
         self.hand = self.moveit.get_planning_component('hand_r')
 
         self.get_logger().info(
-            'Wave interaction node ready. '
-            'Publish PoseStamped goals on /interaction_goal_pose.'
+            'Wave interaction node ready. Goals: /interaction_goal_pose. '
+            'Standalone wave: /wave_command.'
+        )
+
+    def _build_moveit_config(self):
+        ffw_description_share = get_package_share_directory(
+            'ffw_description'
+        )
+
+        ffw_moveit_config_share = get_package_share_directory(
+            'ffw_moveit_config'
+        )
+
+        robot_xacro_path = os.path.join(
+            ffw_description_share,
+            'urdf',
+            'ffw_sh5_rev1_follower',
+            'ffw_sh5_follower.urdf.xacro',
+        )
+
+        moveit_cpp_path = os.path.join(
+            ffw_moveit_config_share,
+            'config',
+            'moveit_cpp.yaml',
+        )
+
+        required_files = [
+            robot_xacro_path,
+            moveit_cpp_path,
+        ]
+
+        for file_path in required_files:
+            if not os.path.exists(file_path):
+                raise FileNotFoundError(
+                    f'Required MoveIt file was not found: {file_path}'
+                )
+
+        return (
+            MoveItConfigsBuilder(
+                robot_name='ffw',
+                package_name='ffw_moveit_config',
+            )
+            .robot_description(
+                file_path=robot_xacro_path,
+            )
+            .robot_description_semantic(
+                file_path='config/ffw.srdf',
+            )
+            .robot_description_kinematics(
+                file_path='config/kinematics.yaml',
+            )
+            .joint_limits(
+                file_path='config/joint_limits.yaml',
+            )
+            .planning_pipelines(
+                pipelines=['ompl'],
+                default_planning_pipeline='ompl',
+            )
+            .trajectory_execution(
+                file_path='config/moveit_controllers.yaml',
+            )
+            .moveit_cpp(
+                file_path=moveit_cpp_path,
+            )
+            .to_moveit_configs()
+            .to_dict()
         )
 
     # ============================================================
@@ -169,34 +218,83 @@ class WaveInteraction(Node):
                 f'Interaction state: {previous_state} -> {new_state}'
             )
 
-    def _goal_pose_cb(self, msg: PoseStamped):
-        with self.state_lock:
-            busy_states = {
-                self.STATE_SENDING,
-                self.STATE_NAVIGATING,
-                self.STATE_CANCELLING,
-                self.STATE_WAVING,
-                self.STATE_RESUMING,
-            }
+    def _wave_is_running(self):
+        return self.wave_thread is not None and self.wave_thread.is_alive()
 
-            if self.interaction_state in busy_states:
+    # ============================================================
+    # Standalone wave test
+    # ============================================================
+
+    def _wave_command_cb(self, msg: Bool):
+        if not msg.data:
+            return
+
+        with self.state_lock:
+            if self._wave_is_running():
                 self.get_logger().warning(
-                    'Ignoring new navigation goal because the interaction '
-                    f'node is currently "{self.interaction_state}"'
+                    'Ignoring standalone wave command: wave already running'
                 )
                 return
 
-        self.send_nav_goal(msg, is_resume=False)
+            if self.interaction_state in {
+                self.STATE_SENDING,
+                self.STATE_NAVIGATING,
+                self.STATE_CANCELLING,
+                self.STATE_RESUMING,
+                self.STATE_WAVING,
+            }:
+                self.get_logger().warning(
+                    'Ignoring standalone wave command while state is '
+                    f'"{self.interaction_state}"'
+                )
+                return
+
+            self.interaction_state = self.STATE_WAVING
+
+        self.get_logger().info('Starting standalone wave')
+        self.wave_thread = threading.Thread(
+            target=self._standalone_wave_worker,
+            daemon=True,
+        )
+        self.wave_thread.start()
+
+    def _standalone_wave_worker(self):
+        wave_success = self.do_wave()
+
+        with self.state_lock:
+            self.interaction_state = (
+                self.STATE_IDLE if wave_success else self.STATE_FAILED
+            )
+
+        if wave_success:
+            self.get_logger().info('Standalone wave completed successfully')
+        else:
+            self.get_logger().error('Standalone wave failed')
 
     # ============================================================
     # Nav2 goal handling
     # ============================================================
 
+    def _goal_pose_cb(self, msg: PoseStamped):
+        with self.state_lock:
+            if self.interaction_state in {
+                self.STATE_SENDING,
+                self.STATE_NAVIGATING,
+                self.STATE_CANCELLING,
+                self.STATE_WAVING,
+                self.STATE_RESUMING,
+            }:
+                self.get_logger().warning(
+                    'Ignoring new navigation goal because state is '
+                    f'"{self.interaction_state}"'
+                )
+                return
+
+        self.send_nav_goal(msg, is_resume=False)
+
     def send_nav_goal(self, pose, is_resume=False):
         if pose is None:
-            self.get_logger().error(
-                'Cannot send Nav2 goal because the pose is None'
-            )
+            self.get_logger().error('Cannot send a None Nav2 goal')
             return False
 
         if not pose.header.frame_id:
@@ -206,16 +304,14 @@ class WaveInteraction(Node):
             return False
 
         with self.state_lock:
-            blocked_states = {
+            if self.interaction_state in {
                 self.STATE_SENDING,
                 self.STATE_NAVIGATING,
                 self.STATE_CANCELLING,
                 self.STATE_WAVING,
-            }
-
-            if self.interaction_state in blocked_states:
+            }:
                 self.get_logger().warning(
-                    'Cannot send Nav2 goal while interaction state is '
+                    'Cannot send Nav2 goal while state is '
                     f'"{self.interaction_state}"'
                 )
                 return False
@@ -236,38 +332,33 @@ class WaveInteraction(Node):
         with self.state_lock:
             self.current_goal_pose = saved_pose
             self.goal_handle = None
-
             self.goal_sequence += 1
             goal_sequence = self.goal_sequence
             self.active_goal_sequence = goal_sequence
-
             self.interaction_state = (
                 self.STATE_RESUMING if is_resume else self.STATE_SENDING
             )
 
-        if is_resume:
-            self.get_logger().info(
-                'Resending the interrupted Nav2 goal'
-            )
-        else:
-            self.get_logger().info('Sending Nav2 goal')
+        self.get_logger().info(
+            'Resending interrupted Nav2 goal'
+            if is_resume
+            else 'Sending Nav2 goal'
+        )
 
         try:
             future = self.nav_client.send_goal_async(
                 goal_msg,
-                feedback_callback=lambda feedback:
-                    self._nav_feedback_cb(
-                        feedback,
-                        goal_sequence,
-                    ),
+                feedback_callback=lambda feedback: self._nav_feedback_cb(
+                    feedback,
+                    goal_sequence,
+                ),
             )
             future.add_done_callback(
-                lambda completed_future:
-                    self._goal_response_cb(
-                        completed_future,
-                        goal_sequence,
-                        is_resume,
-                    )
+                lambda completed_future: self._goal_response_cb(
+                    completed_future,
+                    goal_sequence,
+                    is_resume,
+                )
             )
         except Exception as error:
             with self.state_lock:
@@ -298,7 +389,6 @@ class WaveInteraction(Node):
             with self.state_lock:
                 if goal_sequence != self.active_goal_sequence:
                     return
-
                 self.goal_handle = None
                 self.interaction_state = self.STATE_FAILED
 
@@ -311,17 +401,13 @@ class WaveInteraction(Node):
             with self.state_lock:
                 self.goal_handle = None
                 self.interaction_state = self.STATE_FAILED
-
-            self.get_logger().error(
-                'Nav2 returned an empty goal handle'
-            )
+            self.get_logger().error('Nav2 returned an empty goal handle')
             return
 
         if not returned_goal_handle.accepted:
             with self.state_lock:
                 self.goal_handle = None
                 self.interaction_state = self.STATE_REJECTED
-
             self.get_logger().warning('Nav2 rejected the goal')
             return
 
@@ -329,21 +415,19 @@ class WaveInteraction(Node):
             self.goal_handle = returned_goal_handle
             self.interaction_state = self.STATE_NAVIGATING
 
-        if is_resume:
-            self.get_logger().info(
-                'Resumed Nav2 goal accepted'
-            )
-        else:
-            self.get_logger().info('Nav2 goal accepted')
+        self.get_logger().info(
+            'Resumed Nav2 goal accepted'
+            if is_resume
+            else 'Nav2 goal accepted'
+        )
 
         try:
             result_future = returned_goal_handle.get_result_async()
             result_future.add_done_callback(
-                lambda completed_future:
-                    self._nav_result_cb(
-                        completed_future,
-                        goal_sequence,
-                    )
+                lambda completed_future: self._nav_result_cb(
+                    completed_future,
+                    goal_sequence,
+                )
             )
         except Exception as error:
             with self.state_lock:
@@ -355,10 +439,7 @@ class WaveInteraction(Node):
                 f'Failed to request Nav2 result: {error}'
             )
 
-    def _nav_feedback_cb(self, feedback_msg, goal_sequence):
-        # Nav2 feedback is frequent. It is deliberately not logged.
-        # The sequence check prevents stale feedback from being treated as
-        # feedback for a resumed goal.
+    def _nav_feedback_cb(self, _feedback_msg, goal_sequence):
         with self.state_lock:
             if goal_sequence != self.active_goal_sequence:
                 return
@@ -374,7 +455,6 @@ class WaveInteraction(Node):
             with self.state_lock:
                 if goal_sequence != self.active_goal_sequence:
                     return
-
                 self.goal_handle = None
                 self.interaction_state = self.STATE_FAILED
 
@@ -384,6 +464,7 @@ class WaveInteraction(Node):
             return
 
         status = wrapped_result.status
+        start_wave = False
 
         with self.state_lock:
             if goal_sequence != self.active_goal_sequence:
@@ -397,17 +478,25 @@ class WaveInteraction(Node):
                 log_method = self.get_logger().info
 
             elif status == GoalStatus.STATUS_CANCELED:
-                # During an interaction, cancellation is expected. Keep the
-                # interaction state if the wave worker is still running.
-                if self.interaction_state not in {
-                    self.STATE_CANCELLING,
+                if self.interaction_state == self.STATE_CANCELLING:
+                    # The goal is now terminally canceled. It is safe to move
+                    # the arm and later resend the saved navigation goal.
+                    self.interaction_state = self.STATE_WAVING
+                    start_wave = True
+                    message = (
+                        'Navigation goal is fully canceled; starting wave'
+                    )
+                    log_method = self.get_logger().info
+                elif self.interaction_state not in {
                     self.STATE_WAVING,
                     self.STATE_RESUMING,
                 }:
                     self.interaction_state = self.STATE_CANCELLED
-
-                message = 'Navigation goal finished as cancelled'
-                log_method = self.get_logger().info
+                    message = 'Navigation goal finished as canceled'
+                    log_method = self.get_logger().info
+                else:
+                    message = 'Canceled result received during interaction'
+                    log_method = self.get_logger().debug
 
             elif status == GoalStatus.STATUS_ABORTED:
                 self.interaction_state = self.STATE_ABORTED
@@ -424,22 +513,21 @@ class WaveInteraction(Node):
 
         log_method(message)
 
+        if start_wave:
+            self._start_navigation_wave_worker(goal_sequence)
+
     # ============================================================
-    # Person detection
+    # Person detection and cancellation
     # ============================================================
 
     def on_person_detected(self, msg: Bool):
         if not msg.data:
-            # False rearms the latch, but navigation does not wait for False.
             with self.state_lock:
                 self.person_latched = False
             return
 
         with self.state_lock:
             if self.person_latched:
-                self.get_logger().debug(
-                    'Ignoring continuous True detection because it is latched'
-                )
                 return
 
             if self.interaction_state in {
@@ -448,10 +536,6 @@ class WaveInteraction(Node):
                 self.STATE_RESUMING,
                 self.STATE_SENDING,
             }:
-                self.get_logger().debug(
-                    'Ignoring detection because an interaction is already '
-                    f'in progress: "{self.interaction_state}"'
-                )
                 return
 
             if self.interaction_state != self.STATE_NAVIGATING:
@@ -464,28 +548,26 @@ class WaveInteraction(Node):
             if self.goal_handle is None:
                 self.interaction_state = self.STATE_FAILED
                 self.get_logger().error(
-                    'Navigation state is active, but no goal handle exists'
+                    'Navigation is active, but no goal handle exists'
                 )
                 return
 
             self.person_latched = True
             self.interaction_state = self.STATE_CANCELLING
-
             goal_handle = self.goal_handle
             goal_sequence = self.active_goal_sequence
 
         self.get_logger().info(
-            'Person detected — requesting cancellation of Nav2 goal'
+            'Person detected; requesting Nav2 goal cancellation'
         )
 
         try:
             cancel_future = goal_handle.cancel_goal_async()
             cancel_future.add_done_callback(
-                lambda completed_future:
-                    self._after_cancel(
-                        completed_future,
-                        goal_sequence,
-                    )
+                lambda completed_future: self._after_cancel_request(
+                    completed_future,
+                    goal_sequence,
+                )
             )
         except Exception as error:
             with self.state_lock:
@@ -496,7 +578,7 @@ class WaveInteraction(Node):
                 f'Failed to request Nav2 cancellation: {error}'
             )
 
-    def _after_cancel(self, future, goal_sequence):
+    def _after_cancel_request(self, future, goal_sequence):
         with self.state_lock:
             if goal_sequence != self.active_goal_sequence:
                 return
@@ -505,60 +587,58 @@ class WaveInteraction(Node):
             cancel_response = future.result()
         except Exception as error:
             with self.state_lock:
-                if goal_sequence == self.active_goal_sequence:
+                if (
+                    goal_sequence == self.active_goal_sequence
+                    and self.interaction_state == self.STATE_CANCELLING
+                ):
                     self.interaction_state = self.STATE_NAVIGATING
 
             self.get_logger().error(
-                f'Nav2 goal cancellation failed: {error}'
+                f'Nav2 cancellation request failed: {error}'
             )
             return
 
-        if cancel_response is None:
+        if cancel_response is None or not cancel_response.goals_canceling:
             with self.state_lock:
-                self.interaction_state = self.STATE_NAVIGATING
-
-            self.get_logger().error(
-                'Nav2 returned an empty cancellation response'
-            )
-            return
-
-        if not cancel_response.goals_canceling:
-            # The goal may have completed before the cancellation request was
-            # processed. Do not wave and do not resend a completed goal.
-            with self.state_lock:
-                if self.interaction_state == self.STATE_CANCELLING:
+                if (
+                    goal_sequence == self.active_goal_sequence
+                    and self.interaction_state == self.STATE_CANCELLING
+                ):
                     self.interaction_state = self.STATE_NAVIGATING
 
             self.get_logger().warning(
-                'Nav2 did not confirm cancellation. '
-                'Wave will not start and the goal will not be resent.'
+                'Nav2 did not accept the cancellation request. '
+                'Wave will not start.'
             )
             return
 
+        # Do not start the wave here. A cancellation response only means the
+        # request was accepted. _nav_result_cb starts the wave after Nav2
+        # reports the goal's terminal CANCELED result.
+        self.get_logger().info(
+            'Nav2 accepted the cancellation request; waiting for the '
+            'terminal canceled result'
+        )
+
+    def _start_navigation_wave_worker(self, goal_sequence):
         with self.state_lock:
             if goal_sequence != self.active_goal_sequence:
                 return
 
-            if self.interaction_state != self.STATE_CANCELLING:
+            if self._wave_is_running():
+                self.get_logger().warning(
+                    'Wave worker is already running'
+                )
                 return
 
-            self.interaction_state = self.STATE_WAVING
-
-        self.get_logger().info(
-            'Nav2 confirmed cancellation — starting wave worker'
-        )
-
-        # MoveIt planning and execution are blocking. Run the complete wave
-        # outside the ROS action callback so subscriptions and action callbacks
-        # remain responsive.
         self.wave_thread = threading.Thread(
-            target=self._wave_worker,
+            target=self._navigation_wave_worker,
             args=(goal_sequence,),
             daemon=True,
         )
         self.wave_thread.start()
 
-    def _wave_worker(self, goal_sequence):
+    def _navigation_wave_worker(self, goal_sequence):
         wave_success = self.do_wave()
 
         if not wave_success:
@@ -597,18 +677,15 @@ class WaveInteraction(Node):
             self.interaction_state = self.STATE_RESUMING
 
         self.get_logger().info(
-            'Wave completed successfully — resuming navigation'
+            'Wave completed successfully; resuming navigation'
         )
 
-        if not self.send_nav_goal(
-            pose_to_resume,
-            is_resume=True,
-        ):
+        if not self.send_nav_goal(pose_to_resume, is_resume=True):
             with self.state_lock:
                 self.interaction_state = self.STATE_FAILED
 
             self.get_logger().error(
-                'The original Nav2 goal could not be resumed'
+                'The interrupted Nav2 goal could not be resumed'
             )
 
     # ============================================================
@@ -616,7 +693,6 @@ class WaveInteraction(Node):
     # ============================================================
 
     def do_wave(self):
-        # The named states "open" and "ready" exist in ffw.srdf.
         if not self._go_to_named(
             component=self.hand,
             state_name='open',
@@ -648,18 +724,11 @@ class WaveInteraction(Node):
             ):
                 return False
 
-        if not self._go_to_named(
+        return self._go_to_named(
             component=self.arm,
             state_name='ready',
             description='return right arm to ready',
-        ):
-            return False
-
-        return True
-
-    # ============================================================
-    # Named-state motion
-    # ============================================================
+        )
 
     def _go_to_named(
         self,
@@ -667,132 +736,76 @@ class WaveInteraction(Node):
         state_name,
         description,
     ):
-        self.get_logger().info(
-            f'Planning motion: {description}'
-        )
+        self.get_logger().info(f'Planning motion: {description}')
 
         try:
-            # This requires valid data on /joint_states.
             component.set_start_state_to_current_state()
-
-            component.set_goal_state(
-                configuration_name=state_name,
-            )
-
+            component.set_goal_state(configuration_name=state_name)
         except Exception as error:
             self.get_logger().error(
                 f'Failed to configure motion "{description}": {error}'
             )
             return False
 
-        return self._plan_and_execute(
-            component=component,
-            description=description,
-        )
+        return self._plan_and_execute(component, description)
 
-    # ============================================================
-    # Direct joint-value motion
-    # ============================================================
-
-    def _go_to_arm_positions(
-        self,
-        positions,
-        description,
-    ):
+    def _go_to_arm_positions(self, positions, description):
         if len(positions) != len(ARM_R_JOINT_NAMES):
             self.get_logger().error(
-                f'Invalid arm target for "{description}": '
-                f'expected {len(ARM_R_JOINT_NAMES)} values, '
-                f'got {len(positions)}'
+                f'Invalid target for "{description}": expected '
+                f'{len(ARM_R_JOINT_NAMES)} values, got {len(positions)}'
             )
             return False
 
-        self.get_logger().info(
-            f'Planning motion: {description}'
-        )
+        self.get_logger().info(f'Planning motion: {description}')
 
         try:
-            # This requires /joint_states to be available.
             self.arm.set_start_state_to_current_state()
-
             goal_state = RobotState(self.robot_model)
-
-            # Assign all seven joints in the exact arm_r group order.
-            goal_state.set_joint_group_positions(
-                'arm_r',
-                positions,
-            )
-
-            # Update transforms after modifying joint values.
+            goal_state.set_joint_group_positions('arm_r', positions)
             goal_state.update()
-
-            self.arm.set_goal_state(
-                robot_state=goal_state,
-            )
-
+            self.arm.set_goal_state(robot_state=goal_state)
         except Exception as error:
             self.get_logger().error(
                 f'Failed to configure motion "{description}": {error}'
             )
             return False
 
-        return self._plan_and_execute(
-            component=self.arm,
-            description=description,
-        )
+        return self._plan_and_execute(self.arm, description)
 
-    # ============================================================
-    # Plan and execute
-    # ============================================================
-
-    def _plan_and_execute(
-        self,
-        component,
-        description,
-    ):
+    def _plan_and_execute(self, component, description):
         try:
             plan_result = component.plan()
         except Exception as error:
             self.get_logger().error(
-                f'Planning raised an exception for '
-                f'"{description}": {error}'
+                f'Planning raised an exception for "{description}": '
+                f'{error}'
             )
             return False
 
-        if not plan_result:
+        if not plan_result or not hasattr(plan_result, 'trajectory'):
             self.get_logger().error(
                 f'Planning failed for "{description}"'
             )
             return False
 
-        if not hasattr(plan_result, 'trajectory'):
-            self.get_logger().error(
-                f'Planning result for "{description}" '
-                'does not contain a trajectory'
-            )
-            return False
-
-        self.get_logger().info(
-            f'Executing motion: {description}'
-        )
+        self.get_logger().info(f'Executing motion: {description}')
 
         try:
-            # Execution must be performed through the main MoveItPy
-            # instance, not through the PlanningComponent.
             execution_result = self.moveit.execute(
                 plan_result.trajectory,
                 controllers=[],
             )
         except Exception as error:
             self.get_logger().error(
-                f'Execution raised an exception for '
-                f'"{description}": {error}'
+                f'Execution raised an exception for "{description}": '
+                f'{error}'
             )
             return False
 
         if not self._execution_succeeded(execution_result):
             self.get_logger().error(
-                f'Execution failed or was aborted for "{description}". '
+                f'Execution failed for "{description}". '
                 f'Result: {execution_result}'
             )
             return False
@@ -800,20 +813,10 @@ class WaveInteraction(Node):
         self.get_logger().info(
             f'Motion completed successfully: {description}'
         )
-
         return True
 
     @staticmethod
     def _execution_succeeded(execution_result):
-        """
-        Handle the result formats used by different MoveItPy versions.
-
-        Possible formats include:
-        - bool
-        - MoveItErrorCode-like object with a .val field
-        - object exposing success
-        """
-
         if execution_result is None:
             return False
 
@@ -821,13 +824,11 @@ class WaveInteraction(Node):
             return execution_result
 
         if hasattr(execution_result, 'val'):
-            # MoveItErrorCodes.SUCCESS is 1.
             return execution_result.val == 1
 
         if hasattr(execution_result, 'success'):
             return bool(execution_result.success)
 
-        # Do not silently treat an unknown result type as success.
         return False
 
 
@@ -841,10 +842,8 @@ def main(args=None):
         node = WaveInteraction()
         executor.add_node(node)
         executor.spin()
-
     except KeyboardInterrupt:
         pass
-
     except Exception as error:
         if node is not None:
             node.get_logger().fatal(
@@ -852,7 +851,6 @@ def main(args=None):
             )
         else:
             print(f'Wave interaction node failed to start: {error}')
-
     finally:
         executor.shutdown()
 
