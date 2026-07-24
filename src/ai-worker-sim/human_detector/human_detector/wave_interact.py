@@ -745,12 +745,30 @@ class WaveInteraction(Node):
 
     @staticmethod
     def _execution_succeeded(execution_result):
+        """
+        Check the result returned by MoveItPy.execute().
+
+        In ROS 2 Jazzy, MoveItPy normally returns:
+        moveit.core.controller_manager.ExecutionStatus
+
+        Its `status` property is a string such as:
+        SUCCEEDED, ABORTED, FAILED, TIMED_OUT, or PREEMPTED.
+        """
+
         if execution_result is None:
             return False
 
+        # ROS 2 Jazzy MoveItPy ExecutionStatus.
+        status = getattr(execution_result, 'status', None)
+
+        if status is not None:
+            return str(status).strip().upper() == 'SUCCEEDED'
+
+        # Compatibility with versions that return a plain bool.
         if isinstance(execution_result, bool):
             return execution_result
 
+        # Compatibility with MoveItErrorCode-like objects.
         if hasattr(execution_result, 'val'):
             return execution_result.val == 1
 
@@ -758,7 +776,6 @@ class WaveInteraction(Node):
             return bool(execution_result.success)
 
         return False
-
 
 def main(args=None):
     rclpy.init(args=args)
