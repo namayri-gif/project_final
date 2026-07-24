@@ -84,7 +84,7 @@ class WaveInteraction(Node):
     def __init__(self):
         super().__init__('wave_interaction')
 
-        self.declare_parameter('use_sim_time', True)
+
 
         self.callback_group = ReentrantCallbackGroup()
         self.state_lock = threading.RLock()
