@@ -1,3 +1,1 @@
-source;share/ffw_navigation/environment/ament_prefix_path.sh
-source;share/ffw_navigation/environment/library_path.sh
-source;share/ffw_navigation/environment/path.sh
+/root/workspaces/ros2_ws/build/ffw_navigation/ament_cmake_environment_hooks/local_setup.dsv

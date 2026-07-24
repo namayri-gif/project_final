@@ -28,17 +28,14 @@ def generate_launch_description():
     pkg_navigation = get_package_share_directory('ffw_navigation')
     os.environ.setdefault('GZ_SIM_RESOURCE_PATH', '')
     os.environ['GZ_SIM_RESOURCE_PATH'] += os.pathsep + pkg_navigation
+   
+    # --- Human detection node (Not eeded in this launch anymore as it has its own launch file now) ---#
 
-    # Find the installation path of the target package
-    human_detector_pkg_dir = get_package_share_directory('human_detector')
-    
-    # Path to the specific launch file you want to run
-    launch_file_path = os.path.join(human_detector_pkg_dir, 'launch', 'human_detector.launch.py')
-    
-    # Include the file in your deployment
-    included_launch = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource(launch_file_path),
-    )
+    # human_detector_pkg_dir = get_package_share_directory('human_detector') 
+    #launch_file_path = os.path.join(human_detector_pkg_dir, 'launch', 'human_detector.launch.py')
+    #included_launch = IncludeLaunchDescription(
+    #    PythonLaunchDescriptionSource(launch_file_path),
+    #)
 
     rviz_launch_arg = DeclareLaunchArgument(
         'rviz',
@@ -54,7 +51,7 @@ def generate_launch_description():
 
     sim_time_arg = DeclareLaunchArgument(
         'use_sim_time',
-        default_value='false',
+        default_value='true',
         description='Flag to enable use_sim_time'
     )
 
