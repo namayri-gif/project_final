@@ -204,10 +204,25 @@ idle → sending → navigating → cancelling → waving → resuming → succe
 
 ## Demos and Pictures
 
+Mapping Video and Full Map pgm:
+
+[scrnli_5yrzgF9Qf7FLP3.pdf](https://github.com/user-attachments/files/30356629/scrnli_5yrzgF9Qf7FLP3.pdf)
+
+
+
+Uploading ETGAH (10).mp4…
+
+
+
 Person Loaded into Gazebo world:
 
 [scrnli_68n6iVABcon2aL.pdf](https://github.com/user-attachments/files/30356497/scrnli_68n6iVABcon2aL.pdf)
 
+
+Version 1 of phase 2 launch:
+
+
+Uploading ETGAH (12).mp4…
 
 
 
