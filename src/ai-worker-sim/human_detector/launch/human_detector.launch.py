@@ -4,6 +4,7 @@ from ament_index_python.packages import get_package_share_directory
 from launch import LaunchDescription
 from launch.actions import TimerAction
 from launch_ros.actions import Node
+from moveit_configs_utils import MoveItConfigsBuilder
 
 
 def generate_launch_description():
@@ -28,17 +29,44 @@ def generate_launch_description():
                 f'Missing detector {description} file: {file_path}'
             )
 
-    # MoveIt configuration is intentionally built inside wave_interact.py.
-    # MoveItPy creates an internal rclcpp node, so passing MoveIt parameters
-    # only through this launch Node does not configure that internal node.
+    # The corrected .setup_assistant file identifies the real robot Xacro and
+    # SRDF. moveit_cpp.yaml supplies MoveItCpp/MoveItPy runtime parameters.
+    moveit_config = (
+        MoveItConfigsBuilder(
+            robot_name='ffw',
+            package_name='ffw_moveit_config',
+        )
+        .robot_description()
+        .robot_description_semantic()
+        .robot_description_kinematics()
+        .joint_limits()
+        .planning_pipelines(
+            pipelines=['ompl'],
+            default_planning_pipeline='ompl',
+        )
+        .trajectory_execution(
+            file_path='config/moveit_controllers.yaml',
+        )
+        .moveit_cpp(
+            file_path='config/moveit_cpp.yaml',
+        )
+        .to_moveit_configs()
+    )
+
+    # The Python node and MoveItPy's internal C++ node both receive this same
+    # launch parameter file. Do not declare use_sim_time in wave_interact.py
+    # and do not add it to moveit_cpp.yaml.
     wave_interact = Node(
         package='human_detector',
         executable='wave_interact',
         name='wave_interact',
         output='screen',
-        parameters=[{
-            'use_sim_time': True,
-        }],
+        parameters=[
+            moveit_config.to_dict(),
+            {
+                'use_sim_time': True,
+            },
+        ],
     )
 
     person_detector = Node(
@@ -55,8 +83,6 @@ def generate_launch_description():
         }],
     )
 
-    # Give MoveItPy time to load the robot model and planning pipeline before
-    # the detector begins publishing events.
     delayed_person_detector = TimerAction(
         period=10.0,
         actions=[person_detector],

@@ -1,14 +1,11 @@
 import copy
-import os
 import threading
 
 import rclpy
 from action_msgs.msg import GoalStatus
-from ament_index_python.packages import get_package_share_directory
 from geometry_msgs.msg import PoseStamped
 from moveit.core.robot_state import RobotState
 from moveit.planning import MoveItPy
-from moveit_configs_utils import MoveItConfigsBuilder
 from nav2_msgs.action import NavigateToPose
 from rclpy.action import ActionClient
 from rclpy.callback_groups import ReentrantCallbackGroup
@@ -66,11 +63,6 @@ class WaveInteraction(Node):
     def __init__(self):
         super().__init__('wave_interaction')
 
-<<<<<<< HEAD
-
-
-=======
->>>>>>> 63cbe71 (Merge remote changes and update project)
         self.callback_group = ReentrantCallbackGroup()
         self.state_lock = threading.RLock()
 
@@ -122,13 +114,13 @@ class WaveInteraction(Node):
 
         # ---------------- MoveItPy ----------------
 
-        self.get_logger().info('Building MoveItPy configuration...')
-        moveit_config = self._build_moveit_config()
-
         self.get_logger().info('Creating MoveItPy instance...')
+
+        # MoveItPy reads the parameter files passed to this executable by the
+        # launch system. The launch file supplies the complete MoveIt config
+        # and use_sim_time, so no second parameter dictionary is created here.
         self.moveit = MoveItPy(
             node_name='wave_interaction_moveit',
-            config_dict=moveit_config,
         )
 
         self.robot_model = self.moveit.get_robot_model()
@@ -138,70 +130,6 @@ class WaveInteraction(Node):
         self.get_logger().info(
             'Wave interaction node ready. Goals: /interaction_goal_pose. '
             'Standalone wave: /wave_command.'
-        )
-
-    def _build_moveit_config(self):
-        ffw_description_share = get_package_share_directory(
-            'ffw_description'
-        )
-
-        ffw_moveit_config_share = get_package_share_directory(
-            'ffw_moveit_config'
-        )
-
-        robot_xacro_path = os.path.join(
-            ffw_description_share,
-            'urdf',
-            'ffw_sh5_rev1_follower',
-            'ffw_sh5_follower.urdf.xacro',
-        )
-
-        moveit_cpp_path = os.path.join(
-            ffw_moveit_config_share,
-            'config',
-            'moveit_cpp.yaml',
-        )
-
-        required_files = [
-            robot_xacro_path,
-            moveit_cpp_path,
-        ]
-
-        for file_path in required_files:
-            if not os.path.exists(file_path):
-                raise FileNotFoundError(
-                    f'Required MoveIt file was not found: {file_path}'
-                )
-
-        return (
-            MoveItConfigsBuilder(
-                robot_name='ffw',
-                package_name='ffw_moveit_config',
-            )
-            .robot_description(
-                file_path=robot_xacro_path,
-            )
-            .robot_description_semantic(
-                file_path='config/ffw.srdf',
-            )
-            .robot_description_kinematics(
-                file_path='config/kinematics.yaml',
-            )
-            .joint_limits(
-                file_path='config/joint_limits.yaml',
-            )
-            .planning_pipelines(
-                pipelines=['ompl'],
-                default_planning_pipeline='ompl',
-            )
-            .trajectory_execution(
-                file_path='config/moveit_controllers.yaml',
-            )
-            .moveit_cpp(
-                file_path=moveit_cpp_path,
-            )
-            .to_moveit_configs()
-            .to_dict()
         )
 
     # ============================================================
