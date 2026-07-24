@@ -1,9 +1,3 @@
-# MoveItCpp parameters used by the internal MoveItPy node.
-# Keep this file at ffw_moveit_config/config/moveit_cpp.yaml.
-
-# MoveItPy creates its own internal ROS node. It must also use simulation
-# time so its planning-scene timestamps match Gazebo and /joint_states.
-
 planning_scene_monitor_options:
   name: planning_scene_monitor
   robot_description: robot_description
@@ -21,6 +15,6 @@ plan_request_params:
   planning_attempts: 1
   planning_pipeline: ompl
   planner_id: RRTConnectkConfigDefault
-  max_velocity_scaling_factor: 0.30
-  max_acceleration_scaling_factor: 0.30
-  planning_time: 5.0
+  max_velocity_scaling_factor: 0.65
+  max_acceleration_scaling_factor: 0.65
+  planning_time: 4.0
