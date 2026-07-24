@@ -202,7 +202,14 @@ idle → sending → navigating → cancelling → waving → resuming → succe
 
 ---
 
-## Demo
+## Demos and Pictures
+
+Person Loaded into Gazebo world:
+
+[scrnli_68n6iVABcon2aL.pdf](https://github.com/user-attachments/files/30356497/scrnli_68n6iVABcon2aL.pdf)
+
+
+
 
 
 
