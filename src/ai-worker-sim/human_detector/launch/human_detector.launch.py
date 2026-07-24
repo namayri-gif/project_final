@@ -29,8 +29,6 @@ def generate_launch_description():
                 f'Missing detector {description} file: {file_path}'
             )
 
-    # The corrected .setup_assistant file identifies the real robot Xacro and
-    # SRDF. moveit_cpp.yaml supplies MoveItCpp/MoveItPy runtime parameters.
     moveit_config = (
         MoveItConfigsBuilder(
             robot_name='ffw',
@@ -53,9 +51,7 @@ def generate_launch_description():
         .to_moveit_configs()
     )
 
-    # The Python node and MoveItPy's internal C++ node both receive this same
-    # launch parameter file. Do not declare use_sim_time in wave_interact.py
-    # and do not add it to moveit_cpp.yaml.
+    # use_sim_time is supplied here only.
     wave_interact = Node(
         package='human_detector',
         executable='wave_interact',
