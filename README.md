@@ -210,19 +210,18 @@ Mapping Video and Full Map pgm:
 
 
 
-Uploading ETGAH (10).mp4…
-
-
-
 Person Loaded into Gazebo world:
 
 [scrnli_68n6iVABcon2aL.pdf](https://github.com/user-attachments/files/30356497/scrnli_68n6iVABcon2aL.pdf)
 
+Phase 2 launch:
 
-Version 1 of phase 2 launch:
 
 
-Uploading ETGAH (12).mp4…
+
+https://github.com/user-attachments/assets/7d041160-3a41-4264-952d-6e40f2f762dd
+
+
 
 
 
