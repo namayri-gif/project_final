@@ -225,17 +225,6 @@ def generate_launch_description():
         }],
     )
 
-    rviz_config_file = os.path.join(ffw_description_path, 'rviz', 'ffw_sh5.rviz')
-
-    rviz = Node(
-        package='rviz2',
-        executable='rviz2',
-        name='rviz2',
-        output='log',
-        arguments=['-d', rviz_config_file],
-        parameters=[{'use_sim_time': True}],
-    )
-
     tilt_head = TimerAction(
         period=12.0,
         actions=[ExecuteProcess(
@@ -286,7 +275,6 @@ def generate_launch_description():
             bridge,
             dual_laser_merger_node,
             gz_spawn_entity,
-            rviz,
             tilt_head,
         ]),
     ])
