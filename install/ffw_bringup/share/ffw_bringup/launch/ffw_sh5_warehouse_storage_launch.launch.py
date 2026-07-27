@@ -249,7 +249,8 @@ def generate_launch_description():
 
     spawn_controllers_on_jsb_exit = RegisterEventHandler(
         event_handler=OnProcessExit(
-            target_action=joint_state_broadcaster_spawner,
+            target_action=joint_state_broadcaster_
+            wner,
             on_exit=[robot_controller_spawner],
         )
     )

@@ -1,18 +1,24 @@
 import copy
 import math
 import threading
+import time
 
 import rclpy
 from action_msgs.msg import GoalStatus
-from geometry_msgs.msg import PoseStamped
-from moveit.core.robot_state import RobotState
-from moveit.planning import MoveItPy
+from control_msgs.action import FollowJointTrajectory
+from geometry_msgs.msg import PointStamped, PoseStamped
 from nav2_msgs.action import NavigateToPose
+from nav_msgs.msg import Odometry
 from rclpy.action import ActionClient
 from rclpy.callback_groups import ReentrantCallbackGroup
+from rclpy.duration import Duration
 from rclpy.executors import MultiThreadedExecutor
 from rclpy.node import Node
+from rclpy.time import Time
+from sensor_msgs.msg import JointState
 from std_msgs.msg import Bool
+from tf2_ros import Buffer, TransformException, TransformListener
+from trajectory_msgs.msg import JointTrajectory, JointTrajectoryPoint
 
 
 ARM_R_JOINT_NAMES = [
@@ -25,52 +31,39 @@ ARM_R_JOINT_NAMES = [
     'arm_r_joint7',
 ]
 
+HOME_ARM_POSITIONS = [0.0] * len(ARM_R_JOINT_NAMES)
+
 
 def radians(values_degrees):
     return [math.radians(value) for value in values_degrees]
 
 
-# The robot rejected the earlier +122-degree shoulder target because it moved
-# the upper arm into the lift/body. These candidates keep shoulder pitch near
-# zero and use negative shoulder roll so the arm moves outward from the side.
-#
-# MoveIt tests each candidate for joint limits and self-collision. The first
-# candidate that produces a valid plan is executed.
-SIDE_ARM_CANDIDATES = [
-    radians([0.0, -60.0, 0.0, -20.0, 0.0, 0.0, 0.0]),
-    radians([0.0, -70.0, 0.0, -25.0, 0.0, 0.0, 0.0]),
-    radians([-10.0, -60.0, 0.0, -25.0, 0.0, 0.0, 0.0]),
-    radians([10.0, -60.0, 0.0, -25.0, 0.0, 0.0, 0.0]),
-]
-
-
-# After the arm is raised laterally, rotate the elbow plane upward and bend
-# the elbow. Again, MoveIt selects the first collision-free candidate.
-ELBOW_UP_CANDIDATES = [
-    radians([0.0, -60.0, -90.0, -90.0, 0.0, 0.0, 0.0]),
-    radians([0.0, -65.0, -75.0, -85.0, 0.0, 0.0, 0.0]),
-    radians([0.0, -55.0, -90.0, -80.0, 0.0, 0.0, 0.0]),
-    radians([-10.0, -60.0, -80.0, -85.0, 0.0, 0.0, 0.0]),
-]
-
-
-# Wrist wave amplitude. Joint 6 is changed while the shoulder and elbow remain
-# fixed. Two complete left/right cycles are executed.
-WRIST_WAVE_DEGREES = 20.0
+# These positions are the first safe poses already used by this project.
+# The arm is driven directly through arm_r_controller, avoiding MoveItPy.
+SIDE_ARM_POSITION = radians([0.0, -60.0, 0.0, -20.0, 0.0, 0.0, 0.0])
+ELBOW_UP_POSITION = radians([0.0, -60.0, -90.0, -90.0, 0.0, 0.0, 0.0])
+WRIST_WAVE_DEGREES = 15.0
 
 
 class WaveInteraction(Node):
     STATE_IDLE = 'idle'
-    STATE_SENDING = 'sending'
-    STATE_NAVIGATING = 'navigating'
-    STATE_CANCELLING = 'cancelling'
+    STATE_SENDING_ORIGINAL = 'sending_original'
+    STATE_NAVIGATING_ORIGINAL = 'navigating_original'
+    STATE_CANCELLING_ORIGINAL = 'cancelling_original'
+    STATE_SENDING_APPROACH = 'sending_approach'
+    STATE_NAVIGATING_APPROACH = 'navigating_approach'
     STATE_WAVING = 'waving'
-    STATE_RESUMING = 'resuming'
+    STATE_RETURNING_HOME = 'returning_home'
+    STATE_RESUMING = 'resuming_original'
     STATE_SUCCEEDED = 'succeeded'
     STATE_CANCELLED = 'cancelled'
     STATE_ABORTED = 'aborted'
     STATE_REJECTED = 'rejected'
     STATE_FAILED = 'failed'
+
+    GOAL_ORIGINAL = 'original'
+    GOAL_APPROACH = 'approach'
+    GOAL_RESUME = 'resume'
 
     def __init__(self):
         super().__init__('wave_interaction')
@@ -78,16 +71,83 @@ class WaveInteraction(Node):
         self.callback_group = ReentrantCallbackGroup()
         self.state_lock = threading.RLock()
 
-        self.interaction_state = self.STATE_IDLE
-        self.goal_handle = None
-        self.current_goal_pose = None
-        self.goal_sequence = 0
-        self.active_goal_sequence = None
-        self.wave_thread = None
+        self.declare_parameter('map_frame', 'map')
+        self.declare_parameter('base_frame', 'base_link')
+        self.declare_parameter('stand_off_distance', 4.0)
+        self.declare_parameter('approach_skip_margin', 0.15)
+        self.declare_parameter('person_target_max_age', 1.0)
+        self.declare_parameter('base_linear_stop_threshold', 0.01)
+        self.declare_parameter('base_angular_stop_threshold', 0.02)
+        self.declare_parameter('base_stop_stable_duration', 0.50)
+        self.declare_parameter('base_stop_timeout', 8.0)
+        self.declare_parameter('arm_home_tolerance', 0.05)
+        self.declare_parameter('arm_home_stable_duration', 0.30)
+        self.declare_parameter('arm_home_timeout', 8.0)
+        self.declare_parameter(
+            'arm_controller_action',
+            '/arm_r_controller/follow_joint_trajectory',
+        )
 
-        # Only one detector-triggered wave is allowed for each external goal.
-        # A temporary detector dropout cannot start a second wave after resume.
+        self.map_frame = self.get_parameter('map_frame').value
+        self.base_frame = self.get_parameter('base_frame').value
+        self.stand_off_distance = float(
+            self.get_parameter('stand_off_distance').value
+        )
+        self.approach_skip_margin = float(
+            self.get_parameter('approach_skip_margin').value
+        )
+        self.person_target_max_age = float(
+            self.get_parameter('person_target_max_age').value
+        )
+        self.base_linear_stop_threshold = float(
+            self.get_parameter('base_linear_stop_threshold').value
+        )
+        self.base_angular_stop_threshold = float(
+            self.get_parameter('base_angular_stop_threshold').value
+        )
+        self.base_stop_stable_duration = float(
+            self.get_parameter('base_stop_stable_duration').value
+        )
+        self.base_stop_timeout = float(
+            self.get_parameter('base_stop_timeout').value
+        )
+        self.arm_home_tolerance = float(
+            self.get_parameter('arm_home_tolerance').value
+        )
+        self.arm_home_stable_duration = float(
+            self.get_parameter('arm_home_stable_duration').value
+        )
+        self.arm_home_timeout = float(
+            self.get_parameter('arm_home_timeout').value
+        )
+        arm_controller_action = self.get_parameter(
+            'arm_controller_action'
+        ).value
+
+        self.interaction_state = self.STATE_IDLE
+        self.active_goal_handle = None
+        self.active_goal_kind = None
+        self.active_goal_sequence = None
+        self.goal_sequence = 0
+
+        self.original_goal_pose = None
         self.interaction_done_for_goal = False
+        self.person_present = False
+        self.latest_person_target = None
+        self.person_target_received_at = None
+
+        self.latest_linear_speed = None
+        self.latest_angular_speed = None
+        self.latest_joint_positions = {}
+
+        self.worker_thread = None
+
+        self.tf_buffer = Buffer()
+        self.tf_listener = TransformListener(
+            self.tf_buffer,
+            self,
+            spin_thread=False,
+        )
 
         self.nav_client = ActionClient(
             self,
@@ -95,25 +155,34 @@ class WaveInteraction(Node):
             '/navigate_to_pose',
             callback_group=self.callback_group,
         )
+        self.arm_trajectory_client = ActionClient(
+            self,
+            FollowJointTrajectory,
+            arm_controller_action,
+            callback_group=self.callback_group,
+        )
 
-        # Send PoseStamped goals here instead of directly through RViz/Nav2.
-        # This node must own the goal handle to cancel and resume the goal.
         self.create_subscription(
             PoseStamped,
             '/interaction_goal_pose',
-            self._goal_pose_cb,
+            self._external_goal_cb,
             10,
             callback_group=self.callback_group,
         )
-
         self.create_subscription(
             Bool,
             '/person_detected',
-            self.on_person_detected,
+            self._person_detected_cb,
             10,
             callback_group=self.callback_group,
         )
-
+        self.create_subscription(
+            PointStamped,
+            '/person_target',
+            self._person_target_cb,
+            10,
+            callback_group=self.callback_group,
+        )
         self.create_subscription(
             Bool,
             '/wave_command',
@@ -121,28 +190,30 @@ class WaveInteraction(Node):
             10,
             callback_group=self.callback_group,
         )
-
-        self.get_logger().info('Creating MoveItPy instance...')
-
-        # The launch file supplies the complete MoveIt configuration and
-        # use_sim_time. Do not declare use_sim_time here and do not pass a
-        # config_dict to MoveItPy.
-        self.moveit = MoveItPy(
-            node_name='wave_interaction_moveit',
+        self.create_subscription(
+            Odometry,
+            '/odom',
+            self._odom_cb,
+            20,
+            callback_group=self.callback_group,
         )
-
-        self.robot_model = self.moveit.get_robot_model()
-        self.arm = self.moveit.get_planning_component('arm_r')
+        self.create_subscription(
+            JointState,
+            '/joint_states',
+            self._joint_state_cb,
+            20,
+            callback_group=self.callback_group,
+        )
 
         self.get_logger().info(
-            'Wave interaction node ready. Goals: /interaction_goal_pose. '
-            'Standalone wave: /wave_command.'
+            'Interaction ready: original goal -> cancel -> approach person '
+            f'to {self.stand_off_distance:.2f} m -> stop -> wave -> '
+            'arm home -> resume original goal.'
         )
 
-    # ============================================================
-    # State helpers
-    # ============================================================
-
+    # ------------------------------------------------------------------
+    # Shared state
+    # ------------------------------------------------------------------
     def _set_state(self, new_state):
         with self.state_lock:
             old_state = self.interaction_state
@@ -153,679 +224,875 @@ class WaveInteraction(Node):
                 f'Interaction state: {old_state} -> {new_state}'
             )
 
-    def _wave_is_running(self):
-        return self.wave_thread is not None and self.wave_thread.is_alive()
+    def _worker_is_running(self):
+        return self.worker_thread is not None and self.worker_thread.is_alive()
 
-    # ============================================================
-    # Standalone wave test
-    # ============================================================
-
-    def _wave_command_cb(self, msg: Bool):
-        if not msg.data:
-            return
-
+    def _start_worker(self, target, *args):
         with self.state_lock:
-            if self._wave_is_running():
-                self.get_logger().warning(
-                    'Ignoring wave command because a wave is already running'
-                )
-                return
-
-            if self.interaction_state in {
-                self.STATE_SENDING,
-                self.STATE_NAVIGATING,
-                self.STATE_CANCELLING,
-                self.STATE_WAVING,
-                self.STATE_RESUMING,
-            }:
-                self.get_logger().warning(
-                    'Ignoring standalone wave command while state is '
-                    f'"{self.interaction_state}"'
-                )
-                return
-
-            self.interaction_state = self.STATE_WAVING
-
-        self.get_logger().info('Starting standalone wave')
-
-        self.wave_thread = threading.Thread(
-            target=self._standalone_wave_worker,
-            daemon=True,
-        )
-        self.wave_thread.start()
-
-    def _standalone_wave_worker(self):
-        success = self.do_wave()
-
-        with self.state_lock:
-            self.interaction_state = (
-                self.STATE_IDLE if success else self.STATE_FAILED
+            previous_worker = (
+                self.worker_thread
+                if self._worker_is_running()
+                else None
             )
 
-        if success:
-            self.get_logger().info('Standalone wave completed successfully')
-        else:
-            self.get_logger().error('Standalone wave failed')
-
-    # ============================================================
-    # Nav2 goal ownership
-    # ============================================================
-
-    def _goal_pose_cb(self, msg: PoseStamped):
-        with self.state_lock:
-            if self.interaction_state in {
-                self.STATE_SENDING,
-                self.STATE_NAVIGATING,
-                self.STATE_CANCELLING,
-                self.STATE_WAVING,
-                self.STATE_RESUMING,
-            }:
-                self.get_logger().warning(
-                    'Ignoring new goal while state is '
-                    f'"{self.interaction_state}"'
+            if previous_worker is None:
+                self.worker_thread = threading.Thread(
+                    target=target,
+                    args=args,
+                    daemon=True,
                 )
-                return
+            else:
+                # A goal response may arrive just before the worker that sent
+                # that goal exits. Queue the next phase instead of losing it.
+                self.worker_thread = threading.Thread(
+                    target=self._run_after_worker,
+                    args=(previous_worker, target, args),
+                    daemon=True,
+                )
 
-        self.send_nav_goal(msg, is_resume=False)
+            self.worker_thread.start()
+            return True
 
-    def send_nav_goal(self, pose: PoseStamped, is_resume=False):
-        if pose is None:
-            self.get_logger().error('Cannot send a None Nav2 goal')
-            return False
+    @staticmethod
+    def _run_after_worker(previous_worker, target, args):
+        if previous_worker is not threading.current_thread():
+            previous_worker.join()
+        target(*args)
 
-        if not pose.header.frame_id:
-            self.get_logger().error(
-                'Cannot send Nav2 goal because frame_id is empty'
+    # ------------------------------------------------------------------
+    # Sensor callbacks and safety state
+    # ------------------------------------------------------------------
+    def _odom_cb(self, msg: Odometry):
+        linear = msg.twist.twist.linear
+        angular = msg.twist.twist.angular
+
+        with self.state_lock:
+            self.latest_linear_speed = math.sqrt(
+                linear.x * linear.x
+                + linear.y * linear.y
+                + linear.z * linear.z
             )
-            return False
+            self.latest_angular_speed = math.sqrt(
+                angular.x * angular.x
+                + angular.y * angular.y
+                + angular.z * angular.z
+            )
 
+    def _joint_state_cb(self, msg: JointState):
         with self.state_lock:
-            if self.interaction_state in {
-                self.STATE_SENDING,
-                self.STATE_NAVIGATING,
-                self.STATE_CANCELLING,
-                self.STATE_WAVING,
-            }:
-                self.get_logger().warning(
-                    'Cannot send Nav2 goal while state is '
-                    f'"{self.interaction_state}"'
-                )
+            for name, position in zip(msg.name, msg.position):
+                self.latest_joint_positions[name] = float(position)
+
+    def _base_is_stopped_now(self):
+        with self.state_lock:
+            if (
+                self.latest_linear_speed is None
+                or self.latest_angular_speed is None
+            ):
                 return False
 
-        if not self.nav_client.wait_for_server(timeout_sec=5.0):
+            return (
+                self.latest_linear_speed
+                <= self.base_linear_stop_threshold
+                and self.latest_angular_speed
+                <= self.base_angular_stop_threshold
+            )
+
+    def _wait_until_base_stopped(self):
+        deadline = time.monotonic() + self.base_stop_timeout
+        stable_since = None
+
+        while rclpy.ok() and time.monotonic() < deadline:
+            if self._base_is_stopped_now():
+                if stable_since is None:
+                    stable_since = time.monotonic()
+                elif (
+                    time.monotonic() - stable_since
+                    >= self.base_stop_stable_duration
+                ):
+                    self.get_logger().info(
+                        'Base is confirmed stationary'
+                    )
+                    return True
+            else:
+                stable_since = None
+
+            time.sleep(0.05)
+
+        self.get_logger().error(
+            'Base did not become stationary before the safety timeout'
+        )
+        return False
+
+    def _arm_is_home_now(self):
+        with self.state_lock:
+            if not all(
+                name in self.latest_joint_positions
+                for name in ARM_R_JOINT_NAMES
+            ):
+                return False
+
+            return all(
+                abs(self.latest_joint_positions[name])
+                <= self.arm_home_tolerance
+                for name in ARM_R_JOINT_NAMES
+            )
+
+    def _wait_until_arm_home(self):
+        deadline = time.monotonic() + self.arm_home_timeout
+        stable_since = None
+
+        while rclpy.ok() and time.monotonic() < deadline:
+            if self._arm_is_home_now():
+                if stable_since is None:
+                    stable_since = time.monotonic()
+                elif (
+                    time.monotonic() - stable_since
+                    >= self.arm_home_stable_duration
+                ):
+                    self.get_logger().info(
+                        'Right arm is confirmed at the zero/home position'
+                    )
+                    return True
+            else:
+                stable_since = None
+
+            time.sleep(0.05)
+
+        self.get_logger().error(
+            'Right arm did not reach the zero/home position before timeout'
+        )
+        return False
+
+    # ------------------------------------------------------------------
+    # External Nav2 goal ownership
+    # ------------------------------------------------------------------
+    def _external_goal_cb(self, msg: PoseStamped):
+        with self.state_lock:
+            busy_states = {
+                self.STATE_SENDING_ORIGINAL,
+                self.STATE_NAVIGATING_ORIGINAL,
+                self.STATE_CANCELLING_ORIGINAL,
+                self.STATE_SENDING_APPROACH,
+                self.STATE_NAVIGATING_APPROACH,
+                self.STATE_WAVING,
+                self.STATE_RETURNING_HOME,
+                self.STATE_RESUMING,
+            }
+            if self.interaction_state in busy_states:
+                self.get_logger().warning(
+                    'Ignoring a new external goal while interaction state is '
+                    f'{self.interaction_state}'
+                )
+                return
+
+            self.original_goal_pose = copy.deepcopy(msg)
+            self.interaction_done_for_goal = False
+
+        self._send_nav_goal(
+            copy.deepcopy(msg),
+            self.GOAL_ORIGINAL,
+        )
+
+    def _send_nav_goal(self, pose: PoseStamped, goal_kind):
+        if pose is None or not pose.header.frame_id:
+            self.get_logger().error('Cannot send an invalid Nav2 goal')
             self._set_state(self.STATE_FAILED)
+            return False
+
+        if not self.nav_client.wait_for_server(timeout_sec=5.0):
             self.get_logger().error(
                 'NavigateToPose action server is unavailable'
             )
+            self._set_state(self.STATE_FAILED)
             return False
 
-        saved_pose = copy.deepcopy(pose)
-        saved_pose.header.stamp = self.get_clock().now().to_msg()
+        pose_to_send = copy.deepcopy(pose)
+        pose_to_send.header.stamp = self.get_clock().now().to_msg()
 
-        goal_msg = NavigateToPose.Goal()
-        goal_msg.pose = copy.deepcopy(saved_pose)
+        goal = NavigateToPose.Goal()
+        goal.pose = pose_to_send
 
         with self.state_lock:
-            if not is_resume:
-                self.interaction_done_for_goal = False
-
-            self.current_goal_pose = saved_pose
-            self.goal_handle = None
             self.goal_sequence += 1
-            goal_sequence = self.goal_sequence
-            self.active_goal_sequence = goal_sequence
-            self.interaction_state = (
-                self.STATE_RESUMING if is_resume else self.STATE_SENDING
-            )
+            sequence = self.goal_sequence
+            self.active_goal_sequence = sequence
+            self.active_goal_kind = goal_kind
+            self.active_goal_handle = None
 
-        self.get_logger().info(
-            'Resending interrupted Nav2 goal'
-            if is_resume
-            else 'Sending Nav2 goal'
-        )
+            if goal_kind == self.GOAL_APPROACH:
+                self.interaction_state = self.STATE_SENDING_APPROACH
+            elif goal_kind == self.GOAL_RESUME:
+                self.interaction_state = self.STATE_RESUMING
+            else:
+                self.interaction_state = self.STATE_SENDING_ORIGINAL
+
+        labels = {
+            self.GOAL_ORIGINAL: 'original navigation goal',
+            self.GOAL_APPROACH: 'person approach goal',
+            self.GOAL_RESUME: 'resumed original goal',
+        }
+        self.get_logger().info(f'Sending {labels[goal_kind]}')
 
         try:
-            future = self.nav_client.send_goal_async(
-                goal_msg,
-                feedback_callback=lambda feedback: self._nav_feedback_cb(
-                    feedback,
-                    goal_sequence,
-                ),
-            )
-
+            future = self.nav_client.send_goal_async(goal)
             future.add_done_callback(
-                lambda completed_future: self._goal_response_cb(
-                    completed_future,
-                    goal_sequence,
-                    is_resume,
+                lambda completed: self._goal_response_cb(
+                    completed,
+                    sequence,
+                    goal_kind,
                 )
             )
-
         except Exception as error:
-            with self.state_lock:
-                if goal_sequence == self.active_goal_sequence:
-                    self.goal_handle = None
-                    self.interaction_state = self.STATE_FAILED
-
             self.get_logger().error(
                 f'Failed to request Nav2 goal: {error}'
             )
+            self._set_state(self.STATE_FAILED)
             return False
 
         return True
 
-    def _goal_response_cb(
-        self,
-        future,
-        goal_sequence,
-        is_resume,
-    ):
+    def _goal_response_cb(self, future, sequence, goal_kind):
         with self.state_lock:
-            if goal_sequence != self.active_goal_sequence:
+            if sequence != self.active_goal_sequence:
                 return
 
         try:
-            returned_goal_handle = future.result()
+            goal_handle = future.result()
         except Exception as error:
-            with self.state_lock:
-                if goal_sequence != self.active_goal_sequence:
-                    return
-
-                self.goal_handle = None
-                self.interaction_state = self.STATE_FAILED
-
             self.get_logger().error(
-                f'Failed to send Nav2 goal: {error}'
+                f'Failed to receive Nav2 goal response: {error}'
             )
+            self._set_state(self.STATE_FAILED)
             return
 
-        if returned_goal_handle is None:
-            with self.state_lock:
-                self.goal_handle = None
-                self.interaction_state = self.STATE_FAILED
-
-            self.get_logger().error('Nav2 returned an empty goal handle')
-            return
-
-        if not returned_goal_handle.accepted:
-            with self.state_lock:
-                self.goal_handle = None
-                self.interaction_state = self.STATE_REJECTED
-
-            self.get_logger().warning('Nav2 rejected the goal')
+        if goal_handle is None or not goal_handle.accepted:
+            self.get_logger().error(f'Nav2 rejected the {goal_kind} goal')
+            if goal_kind == self.GOAL_APPROACH:
+                self._start_worker(self._safe_resume_without_wave)
+            else:
+                self._set_state(self.STATE_REJECTED)
             return
 
         with self.state_lock:
-            self.goal_handle = returned_goal_handle
-            self.interaction_state = self.STATE_NAVIGATING
+            if sequence != self.active_goal_sequence:
+                return
 
-        self.get_logger().info(
-            'Resumed Nav2 goal accepted'
-            if is_resume
-            else 'Nav2 goal accepted'
+            self.active_goal_handle = goal_handle
+            if goal_kind == self.GOAL_APPROACH:
+                self.interaction_state = self.STATE_NAVIGATING_APPROACH
+            else:
+                self.interaction_state = self.STATE_NAVIGATING_ORIGINAL
+
+        self.get_logger().info(f'Nav2 accepted the {goal_kind} goal')
+
+        result_future = goal_handle.get_result_async()
+        result_future.add_done_callback(
+            lambda completed: self._nav_result_cb(
+                completed,
+                sequence,
+                goal_kind,
+            )
         )
 
-        try:
-            result_future = returned_goal_handle.get_result_async()
-            result_future.add_done_callback(
-                lambda completed_future: self._nav_result_cb(
-                    completed_future,
-                    goal_sequence,
-                )
-            )
-        except Exception as error:
-            with self.state_lock:
-                if goal_sequence == self.active_goal_sequence:
-                    self.goal_handle = None
-                    self.interaction_state = self.STATE_FAILED
-
-            self.get_logger().error(
-                f'Failed to request Nav2 result: {error}'
-            )
-
-    def _nav_feedback_cb(self, _feedback_msg, goal_sequence):
+    def _nav_result_cb(self, future, sequence, goal_kind):
         with self.state_lock:
-            if goal_sequence != self.active_goal_sequence:
+            if sequence != self.active_goal_sequence:
                 return
-
-    def _nav_result_cb(self, future, goal_sequence):
-        with self.state_lock:
-            if goal_sequence != self.active_goal_sequence:
-                return
+            state_at_result = self.interaction_state
 
         try:
             wrapped_result = future.result()
+            status = wrapped_result.status
         except Exception as error:
-            with self.state_lock:
-                if goal_sequence != self.active_goal_sequence:
-                    return
-
-                self.goal_handle = None
-                self.interaction_state = self.STATE_FAILED
-
             self.get_logger().error(
-                f'Failed to retrieve Nav2 result: {error}'
+                f'Could not retrieve Nav2 result: {error}'
             )
+            self._set_state(self.STATE_FAILED)
             return
 
-        status = wrapped_result.status
-        start_wave = False
-
         with self.state_lock:
-            if goal_sequence != self.active_goal_sequence:
+            if sequence != self.active_goal_sequence:
                 return
+            self.active_goal_handle = None
 
-            self.goal_handle = None
-
-            if status == GoalStatus.STATUS_SUCCEEDED:
-                self.interaction_state = self.STATE_SUCCEEDED
-                message = 'Navigation goal succeeded'
-                log_method = self.get_logger().info
-
-            elif status == GoalStatus.STATUS_CANCELED:
-                if self.interaction_state == self.STATE_CANCELLING:
-                    self.interaction_state = self.STATE_WAVING
-                    start_wave = True
-                    message = (
-                        'Navigation goal is fully canceled; starting wave'
-                    )
-                    log_method = self.get_logger().info
-                elif self.interaction_state not in {
-                    self.STATE_WAVING,
-                    self.STATE_RESUMING,
-                }:
-                    self.interaction_state = self.STATE_CANCELLED
-                    message = 'Navigation goal finished as canceled'
-                    log_method = self.get_logger().info
-                else:
-                    message = 'Canceled result received during interaction'
-                    log_method = self.get_logger().debug
-
-            elif status == GoalStatus.STATUS_ABORTED:
-                self.interaction_state = self.STATE_ABORTED
-                message = 'Navigation goal was aborted'
-                log_method = self.get_logger().error
-
-            else:
-                self.interaction_state = self.STATE_FAILED
-                message = (
-                    'Navigation ended with unexpected action status '
-                    f'{status}'
+        if status == GoalStatus.STATUS_SUCCEEDED:
+            if goal_kind == self.GOAL_APPROACH:
+                self.get_logger().info(
+                    'Robot reached the person approach position'
                 )
-                log_method = self.get_logger().warning
-
-        log_method(message)
-
-        if start_wave:
-            self._start_navigation_wave_worker(goal_sequence)
-
-    # ============================================================
-    # Detection and cancellation
-    # ============================================================
-
-    def on_person_detected(self, msg: Bool):
-        if not msg.data:
+                self._set_state(self.STATE_WAVING)
+                self._start_worker(self._interaction_wave_worker)
+            else:
+                self.get_logger().info('Navigation goal succeeded')
+                self._set_state(self.STATE_SUCCEEDED)
             return
 
+        if status == GoalStatus.STATUS_CANCELED:
+            if (
+                goal_kind in {self.GOAL_ORIGINAL, self.GOAL_RESUME}
+                and state_at_result == self.STATE_CANCELLING_ORIGINAL
+            ):
+                self.get_logger().info(
+                    'Original goal is fully cancelled; calculating the '
+                    '1 m person approach goal'
+                )
+                self._set_state(self.STATE_SENDING_APPROACH)
+                self._start_worker(self._approach_person_worker)
+            else:
+                self.get_logger().warning(
+                    f'{goal_kind} goal finished as cancelled'
+                )
+                self._set_state(self.STATE_CANCELLED)
+            return
+
+        if status == GoalStatus.STATUS_ABORTED:
+            self.get_logger().error(f'{goal_kind} goal was aborted')
+            if goal_kind == self.GOAL_APPROACH:
+                self._start_worker(self._safe_resume_without_wave)
+            else:
+                self._set_state(self.STATE_ABORTED)
+            return
+
+        self.get_logger().error(
+            f'{goal_kind} goal ended with unexpected status {status}'
+        )
+        self._set_state(self.STATE_FAILED)
+
+    # ------------------------------------------------------------------
+    # Detection -> cancel -> approach
+    # ------------------------------------------------------------------
+    def _person_detected_cb(self, msg: Bool):
         with self.state_lock:
+            self.person_present = bool(msg.data)
+        self._try_start_interaction()
+
+    def _person_target_cb(self, msg: PointStamped):
+        with self.state_lock:
+            self.latest_person_target = copy.deepcopy(msg)
+            self.person_target_received_at = time.monotonic()
+        self._try_start_interaction()
+
+    def _target_is_fresh_locked(self):
+        return (
+            self.latest_person_target is not None
+            and self.person_target_received_at is not None
+            and (
+                time.monotonic() - self.person_target_received_at
+                <= self.person_target_max_age
+            )
+        )
+
+    def _try_start_interaction(self):
+        with self.state_lock:
+            if not self.person_present:
+                return
             if self.interaction_done_for_goal:
                 return
-
-            if self.interaction_state != self.STATE_NAVIGATING:
+            if self.interaction_state != self.STATE_NAVIGATING_ORIGINAL:
+                return
+            if self.active_goal_handle is None:
+                return
+            if not self._target_is_fresh_locked():
                 return
 
-            if self.goal_handle is None:
-                self.interaction_state = self.STATE_FAILED
-                self.get_logger().error(
-                    'Navigation is active, but no goal handle exists'
-                )
-                return
-
-            # Set this before cancellation. Any temporary detector dropout and
-            # re-detection is ignored for the remainder of this goal.
             self.interaction_done_for_goal = True
-            self.interaction_state = self.STATE_CANCELLING
-
-            goal_handle = self.goal_handle
-            goal_sequence = self.active_goal_sequence
+            self.interaction_state = self.STATE_CANCELLING_ORIGINAL
+            goal_handle = self.active_goal_handle
+            sequence = self.active_goal_sequence
 
         self.get_logger().info(
-            'Person detected; requesting Nav2 goal cancellation'
+            'Person detected with valid depth; cancelling the original goal'
         )
 
         try:
             cancel_future = goal_handle.cancel_goal_async()
             cancel_future.add_done_callback(
-                lambda completed_future: self._after_cancel_request(
-                    completed_future,
-                    goal_sequence,
+                lambda completed: self._after_cancel_request(
+                    completed,
+                    sequence,
                 )
             )
-
         except Exception as error:
-            with self.state_lock:
-                if goal_sequence == self.active_goal_sequence:
-                    self.interaction_state = self.STATE_NAVIGATING
-
             self.get_logger().error(
                 f'Failed to request Nav2 cancellation: {error}'
             )
+            with self.state_lock:
+                if sequence == self.active_goal_sequence:
+                    self.interaction_done_for_goal = False
+                    self.interaction_state = self.STATE_NAVIGATING_ORIGINAL
 
-    def _after_cancel_request(self, future, goal_sequence):
+    def _after_cancel_request(self, future, sequence):
         with self.state_lock:
-            if goal_sequence != self.active_goal_sequence:
+            if sequence != self.active_goal_sequence:
                 return
 
         try:
-            cancel_response = future.result()
+            response = future.result()
         except Exception as error:
-            with self.state_lock:
-                if (
-                    goal_sequence == self.active_goal_sequence
-                    and self.interaction_state == self.STATE_CANCELLING
-                ):
-                    self.interaction_state = self.STATE_NAVIGATING
-
             self.get_logger().error(
                 f'Nav2 cancellation request failed: {error}'
             )
+            with self.state_lock:
+                if sequence == self.active_goal_sequence:
+                    self.interaction_done_for_goal = False
+                    self.interaction_state = self.STATE_NAVIGATING_ORIGINAL
             return
 
-        if cancel_response is None or not cancel_response.goals_canceling:
-            with self.state_lock:
-                if (
-                    goal_sequence == self.active_goal_sequence
-                    and self.interaction_state == self.STATE_CANCELLING
-                ):
-                    self.interaction_state = self.STATE_NAVIGATING
-
+        if response is None or not response.goals_canceling:
             self.get_logger().warning(
-                'Nav2 did not accept the cancellation request'
+                'Nav2 did not accept cancellation of the original goal'
             )
+            with self.state_lock:
+                if sequence == self.active_goal_sequence:
+                    self.interaction_done_for_goal = False
+                    self.interaction_state = self.STATE_NAVIGATING_ORIGINAL
             return
 
         self.get_logger().info(
-            'Nav2 accepted the cancellation request; waiting for the '
-            'terminal canceled result'
+            'Cancellation accepted; waiting for Nav2 terminal CANCELLED result'
         )
 
-    def _start_navigation_wave_worker(self, goal_sequence):
-        with self.state_lock:
-            if goal_sequence != self.active_goal_sequence:
-                return
+    def _approach_person_worker(self):
+        approach_pose, current_distance = self._build_approach_pose_with_retries()
 
-            if self._wave_is_running():
+        if approach_pose is None or current_distance is None:
+            self.get_logger().error(
+                'Could not transform the person target into the map frame'
+            )
+            self._safe_resume_without_wave()
+            return
+
+        if current_distance <= (
+            self.stand_off_distance + self.approach_skip_margin
+        ):
+            self.get_logger().info(
+                f'Robot is already {current_distance:.2f} m from the person; '
+                'no approach movement is required'
+            )
+            self._set_state(self.STATE_WAVING)
+            self._interaction_wave_worker()
+            return
+
+        if not self._send_nav_goal(approach_pose, self.GOAL_APPROACH):
+            self._safe_resume_without_wave()
+
+    def _build_approach_pose_with_retries(self):
+        for _ in range(10):
+            result = self._build_approach_pose()
+            if result[0] is not None:
+                return result
+            time.sleep(0.10)
+        return None, None
+
+    def _build_approach_pose(self):
+        with self.state_lock:
+            if not self._target_is_fresh_locked():
+                return None, None
+            person_target = copy.deepcopy(self.latest_person_target)
+
+        if not person_target.header.frame_id:
+            return None, None
+
+        try:
+            camera_to_map = self.tf_buffer.lookup_transform(
+                self.map_frame,
+                person_target.header.frame_id,
+                Time(),
+                timeout=Duration(seconds=0.50),
+            )
+            base_to_map = self.tf_buffer.lookup_transform(
+                self.map_frame,
+                self.base_frame,
+                Time(),
+                timeout=Duration(seconds=0.50),
+            )
+        except TransformException as error:
+            self.get_logger().warning(
+                f'Waiting for person/base TF: {error}'
+            )
+            return None, None
+
+        person_x, person_y, person_z = self._transform_point(
+            person_target.point.x,
+            person_target.point.y,
+            person_target.point.z,
+            camera_to_map,
+        )
+
+        robot_x = base_to_map.transform.translation.x
+        robot_y = base_to_map.transform.translation.y
+
+        delta_x = person_x - robot_x
+        delta_y = person_y - robot_y
+        distance = math.hypot(delta_x, delta_y)
+
+        if not math.isfinite(distance) or distance < 0.05:
+            return None, None
+
+        approach_x = person_x - self.stand_off_distance * delta_x / distance
+        approach_y = person_y - self.stand_off_distance * delta_y / distance
+        approach_yaw = math.atan2(
+            person_y - approach_y,
+            person_x - approach_x,
+        )
+
+        pose = PoseStamped()
+        pose.header.frame_id = self.map_frame
+        pose.header.stamp = self.get_clock().now().to_msg()
+        pose.pose.position.x = approach_x
+        pose.pose.position.y = approach_y
+        pose.pose.position.z = 0.0
+        pose.pose.orientation.z = math.sin(approach_yaw / 2.0)
+        pose.pose.orientation.w = math.cos(approach_yaw / 2.0)
+
+        self.get_logger().info(
+            'Person target in map: '
+            f'({person_x:.2f}, {person_y:.2f}, {person_z:.2f}); '
+            f'current distance={distance:.2f} m; '
+            f'approach goal=({approach_x:.2f}, {approach_y:.2f})'
+        )
+
+        return pose, distance
+
+    @staticmethod
+    def _transform_point(x, y, z, transform_stamped):
+        transform = transform_stamped.transform
+        q = transform.rotation
+
+        # Quaternion rotation matrix.
+        r00 = 1.0 - 2.0 * (q.y * q.y + q.z * q.z)
+        r01 = 2.0 * (q.x * q.y - q.z * q.w)
+        r02 = 2.0 * (q.x * q.z + q.y * q.w)
+        r10 = 2.0 * (q.x * q.y + q.z * q.w)
+        r11 = 1.0 - 2.0 * (q.x * q.x + q.z * q.z)
+        r12 = 2.0 * (q.y * q.z - q.x * q.w)
+        r20 = 2.0 * (q.x * q.z - q.y * q.w)
+        r21 = 2.0 * (q.y * q.z + q.x * q.w)
+        r22 = 1.0 - 2.0 * (q.x * q.x + q.y * q.y)
+
+        return (
+            transform.translation.x + r00 * x + r01 * y + r02 * z,
+            transform.translation.y + r10 * x + r11 * y + r12 * z,
+            transform.translation.z + r20 * x + r21 * y + r22 * z,
+        )
+
+    # ------------------------------------------------------------------
+    # Wave and safety sequencing
+    # ------------------------------------------------------------------
+    def _wave_command_cb(self, msg: Bool):
+        if not msg.data:
+            return
+
+        with self.state_lock:
+            if self._worker_is_running():
+                return
+            if self.interaction_state in {
+                self.STATE_SENDING_ORIGINAL,
+                self.STATE_NAVIGATING_ORIGINAL,
+                self.STATE_CANCELLING_ORIGINAL,
+                self.STATE_SENDING_APPROACH,
+                self.STATE_NAVIGATING_APPROACH,
+                self.STATE_RESUMING,
+            }:
                 self.get_logger().warning(
-                    'Wave worker is already running'
+                    'Standalone wave rejected while navigation is active'
                 )
                 return
 
-        self.wave_thread = threading.Thread(
-            target=self._navigation_wave_worker,
-            args=(goal_sequence,),
-            daemon=True,
-        )
-        self.wave_thread.start()
+        self._set_state(self.STATE_WAVING)
+        self._start_worker(self._standalone_wave_worker)
 
-    def _navigation_wave_worker(self, goal_sequence):
+    def _standalone_wave_worker(self):
+        if not self._wait_until_base_stopped():
+            self._set_state(self.STATE_FAILED)
+            return
+
+        success = self.do_wave()
+        if success and self._wait_until_arm_home():
+            self._set_state(self.STATE_IDLE)
+            self.get_logger().info('Standalone wave completed safely')
+        else:
+            self._set_state(self.STATE_FAILED)
+
+    def _interaction_wave_worker(self):
+        if not self._wait_until_base_stopped():
+            # The arm is still down, so resuming navigation is safe.
+            self._safe_resume_without_wave()
+            return
+
         wave_success = self.do_wave()
+        home_verified = self._wait_until_arm_home()
+        base_still_stopped = self._wait_until_base_stopped()
 
         if not wave_success:
-            with self.state_lock:
-                if goal_sequence == self.active_goal_sequence:
-                    self.interaction_state = self.STATE_FAILED
-
+            self.get_logger().error('Wave sequence failed')
+        if not home_verified:
             self.get_logger().error(
-                'Wave sequence failed; navigation will not resume'
+                'Navigation will not resume because the arm is not home'
             )
-            return
-
-        with self.state_lock:
-            if goal_sequence != self.active_goal_sequence:
-                self.get_logger().warning(
-                    'Goal changed during wave; navigation will not resume'
-                )
-                return
-
-            if self.interaction_state != self.STATE_WAVING:
-                self.get_logger().warning(
-                    'Interaction state changed during wave; '
-                    'navigation will not resume'
-                )
-                return
-
-            if self.current_goal_pose is None:
-                self.interaction_state = self.STATE_FAILED
-                self.get_logger().error(
-                    'No saved Nav2 goal exists to resume'
-                )
-                return
-
-            pose_to_resume = copy.deepcopy(self.current_goal_pose)
-            self.goal_handle = None
-            self.interaction_state = self.STATE_RESUMING
-
-        self.get_logger().info(
-            'Wave completed successfully; resuming navigation'
-        )
-
-        if not self.send_nav_goal(pose_to_resume, is_resume=True):
-            with self.state_lock:
-                self.interaction_state = self.STATE_FAILED
-
+        if not base_still_stopped:
             self.get_logger().error(
-                'The interrupted Nav2 goal could not be resumed'
+                'Navigation will not resume because the base safety check failed'
             )
 
-    # ============================================================
-    # Side raise, elbow up, wrist wave
-    # ============================================================
+        if wave_success and home_verified and base_still_stopped:
+            self.get_logger().info(
+                'Wave completed, arm is at zero, and base is stationary; '
+                'resuming the original goal'
+            )
+            self._resume_original_goal()
+        else:
+            self._set_state(self.STATE_FAILED)
 
     def do_wave(self):
-        selected_side_pose = self._plan_and_execute_first_valid(
-            candidates=SIDE_ARM_CANDIDATES,
-            description='raise right arm outward from the side',
-        )
-
-        if selected_side_pose is None:
+        """Execute one fast arm trajectory that ends with all joints at zero."""
+        if not self._base_is_stopped_now():
+            self.get_logger().error(
+                'Refusing to raise the arm because the base is moving'
+            )
             return False
 
-        selected_elbow_pose = self._plan_and_execute_first_valid(
-            candidates=ELBOW_UP_CANDIDATES,
-            description='bend right elbow upward',
-        )
-
-        if selected_elbow_pose is None:
+        current_positions = self._current_arm_positions()
+        if current_positions is None:
+            self.get_logger().error(
+                'Cannot wave because right-arm joint states are unavailable'
+            )
             return False
 
-        wrist_left = list(selected_elbow_pose)
-        wrist_right = list(selected_elbow_pose)
+        if not self.arm_trajectory_client.wait_for_server(timeout_sec=5.0):
+            self.get_logger().error(
+                'Right-arm FollowJointTrajectory server is unavailable'
+            )
+            return False
 
-        wrist_left[5] = math.radians(-WRIST_WAVE_DEGREES)
-        wrist_right[5] = math.radians(WRIST_WAVE_DEGREES)
+        trajectory = JointTrajectory()
+        trajectory.joint_names = list(ARM_R_JOINT_NAMES)
 
-        for cycle in range(2):
-            self.get_logger().info(
-                f'Wrist wave cycle {cycle + 1} of 2'
+        # Current pose -> arm out -> elbow up -> two quick wrist cycles ->
+        # all seven joints exactly zero. Total duration: 4.2 seconds.
+        wave_left = list(ELBOW_UP_POSITION)
+        wave_right = list(ELBOW_UP_POSITION)
+        wave_left[5] = math.radians(-WRIST_WAVE_DEGREES)
+        wave_right[5] = math.radians(WRIST_WAVE_DEGREES)
+
+        sequence = [
+            (0.10, current_positions),
+            (0.80, SIDE_ARM_POSITION),
+            (1.50, ELBOW_UP_POSITION),
+            (1.85, wave_left),
+            (2.20, wave_right),
+            (2.55, wave_left),
+            (2.90, wave_right),
+            (3.25, ELBOW_UP_POSITION),
+            (4.20, HOME_ARM_POSITIONS),
+        ]
+
+        for seconds, positions in sequence:
+            trajectory.points.append(
+                self._trajectory_point(positions, seconds)
             )
 
-            if not self._go_to_arm_positions(
-                wrist_left,
-                'move right hand left',
-            ):
-                return False
+        goal = FollowJointTrajectory.Goal()
+        goal.trajectory = trajectory
+        goal.goal_time_tolerance.sec = 1
 
-            if not self._go_to_arm_positions(
-                wrist_right,
-                'move right hand right',
-            ):
-                return False
+        self.get_logger().info(
+            'Executing fast wave and returning all right-arm joints to zero'
+        )
 
+        send_future = self.arm_trajectory_client.send_goal_async(goal)
+        if not self._wait_for_future(send_future, 3.0):
+            self.get_logger().error('Timed out sending arm trajectory')
+            return False
+
+        goal_handle = send_future.result()
+        if goal_handle is None or not goal_handle.accepted:
+            self.get_logger().error('Arm trajectory was rejected')
+            return False
+
+        result_future = goal_handle.get_result_async()
+        deadline = time.monotonic() + 7.0
+        base_moved = False
+
+        while rclpy.ok() and time.monotonic() < deadline:
+            if result_future.done():
+                break
+
+            if not self._base_is_stopped_now():
+                base_moved = True
+                self.get_logger().error(
+                    'Base movement detected while arm was raised; '
+                    'cancelling arm trajectory'
+                )
+                cancel_future = goal_handle.cancel_goal_async()
+                self._wait_for_future(cancel_future, 1.0)
+                break
+
+            time.sleep(0.02)
+
+        if base_moved:
+            self._command_arm_home()
+            return False
+
+        if not result_future.done():
+            self.get_logger().error('Arm trajectory timed out')
+            cancel_future = goal_handle.cancel_goal_async()
+            self._wait_for_future(cancel_future, 1.0)
+            self._command_arm_home()
+            return False
+
+        wrapped_result = result_future.result()
+        if wrapped_result.status != GoalStatus.STATUS_SUCCEEDED:
+            self.get_logger().error(
+                f'Arm trajectory failed with status {wrapped_result.status}'
+            )
+            self._command_arm_home()
+            return False
+
+        controller_result = wrapped_result.result
+        if (
+            controller_result.error_code
+            != FollowJointTrajectory.Result.SUCCESSFUL
+        ):
+            self.get_logger().error(
+                'Arm controller returned error code '
+                f'{controller_result.error_code}: '
+                f'{controller_result.error_string}'
+            )
+            self._command_arm_home()
+            return False
+
+        self.get_logger().info(
+            'Wave trajectory completed and commanded the arm to zero'
+        )
         return True
 
-    def _plan_and_execute_first_valid(self, candidates, description):
-        for index, positions in enumerate(candidates, start=1):
-            self.get_logger().info(
-                f'Trying candidate {index} of {len(candidates)} for '
-                f'"{description}"'
-            )
-
-            plan_result = self._plan_arm_positions(
-                positions=positions,
-                description=f'{description}, candidate {index}',
-                log_failure=False,
-            )
-
-            if plan_result is None:
-                self.get_logger().warning(
-                    f'Candidate {index} is invalid or collision-prone'
-                )
-                continue
-
-            if not self._execute_plan(
-                plan_result=plan_result,
-                description=f'{description}, candidate {index}',
+    def _current_arm_positions(self):
+        with self.state_lock:
+            if not all(
+                name in self.latest_joint_positions
+                for name in ARM_R_JOINT_NAMES
             ):
                 return None
 
-            self.get_logger().info(
-                f'Selected candidate {index} for "{description}"'
-            )
-            return list(positions)
-
-        self.get_logger().error(
-            f'No valid collision-free candidate was found for "{description}"'
-        )
-        return None
-
-    def _go_to_arm_positions(self, positions, description):
-        plan_result = self._plan_arm_positions(
-            positions=positions,
-            description=description,
-            log_failure=True,
-        )
-
-        if plan_result is None:
-            return False
-
-        return self._execute_plan(
-            plan_result=plan_result,
-            description=description,
-        )
-
-    def _plan_arm_positions(
-        self,
-        positions,
-        description,
-        log_failure,
-    ):
-        if len(positions) != len(ARM_R_JOINT_NAMES):
-            self.get_logger().error(
-                f'Invalid target for "{description}": expected '
-                f'{len(ARM_R_JOINT_NAMES)} values, got {len(positions)}'
-            )
-            return None
-
-        self.get_logger().info(f'Planning motion: {description}')
-
-        try:
-            self.arm.set_start_state_to_current_state()
-
-            goal_state = RobotState(self.robot_model)
-            goal_state.set_joint_group_positions(
-                'arm_r',
-                positions,
-            )
-            goal_state.update()
-
-            self.arm.set_goal_state(
-                robot_state=goal_state,
-            )
-
-            plan_result = self.arm.plan()
-
-        except Exception as error:
-            if log_failure:
-                self.get_logger().error(
-                    f'Planning raised an exception for "{description}": '
-                    f'{error}'
-                )
-            return None
-
-        if not plan_result or not hasattr(plan_result, 'trajectory'):
-            if log_failure:
-                self.get_logger().error(
-                    f'Planning failed for "{description}"'
-                )
-            return None
-
-        return plan_result
-
-    def _execute_plan(self, plan_result, description):
-        self.get_logger().info(f'Executing motion: {description}')
-
-        try:
-            execution_result = self.moveit.execute(
-                plan_result.trajectory,
-                controllers=[],
-            )
-        except Exception as error:
-            self.get_logger().error(
-                f'Execution raised an exception for "{description}": {error}'
-            )
-            return False
-
-        if not self._execution_succeeded(execution_result):
-            self.get_logger().error(
-                f'Execution failed for "{description}". '
-                f'Result: {execution_result}'
-            )
-            return False
-
-        self.get_logger().info(
-            f'Motion completed successfully: {description}'
-        )
-        return True
+            return [
+                self.latest_joint_positions[name]
+                for name in ARM_R_JOINT_NAMES
+            ]
 
     @staticmethod
-    def _execution_succeeded(execution_result):
-        if execution_result is None:
+    def _trajectory_point(positions, seconds):
+        point = JointTrajectoryPoint()
+        point.positions = [float(value) for value in positions]
+
+        whole_seconds = int(seconds)
+        point.time_from_start.sec = whole_seconds
+        point.time_from_start.nanosec = int(
+            (seconds - whole_seconds) * 1.0e9
+        )
+        return point
+
+    def _command_arm_home(self):
+        """Send a separate recovery trajectory to all-zero arm position."""
+        current_positions = self._current_arm_positions()
+        if current_positions is None:
+            self.get_logger().error(
+                'Cannot command arm home because joint states are unavailable'
+            )
             return False
 
-        status = getattr(execution_result, 'status', None)
-        if status is not None:
-            return str(status).strip().upper() == 'SUCCEEDED'
+        if not self.arm_trajectory_client.wait_for_server(timeout_sec=3.0):
+            self.get_logger().error(
+                'Cannot command arm home: controller is unavailable'
+            )
+            return False
 
-        result_text = str(execution_result).strip().upper()
-        if 'SUCCEEDED' in result_text:
-            return True
+        trajectory = JointTrajectory()
+        trajectory.joint_names = list(ARM_R_JOINT_NAMES)
+        trajectory.points = [
+            self._trajectory_point(current_positions, 0.10),
+            self._trajectory_point(HOME_ARM_POSITIONS, 1.20),
+        ]
 
-        if isinstance(execution_result, bool):
-            return execution_result
+        goal = FollowJointTrajectory.Goal()
+        goal.trajectory = trajectory
+        goal.goal_time_tolerance.sec = 1
 
-        if hasattr(execution_result, 'val'):
-            return execution_result.val == 1
+        send_future = self.arm_trajectory_client.send_goal_async(goal)
+        if not self._wait_for_future(send_future, 3.0):
+            return False
 
-        if hasattr(execution_result, 'success'):
-            return bool(execution_result.success)
+        goal_handle = send_future.result()
+        if goal_handle is None or not goal_handle.accepted:
+            return False
 
-        return False
+        result_future = goal_handle.get_result_async()
+        if not self._wait_for_future(result_future, 4.0):
+            return False
+
+        wrapped_result = result_future.result()
+        return (
+            wrapped_result.status == GoalStatus.STATUS_SUCCEEDED
+            and wrapped_result.result.error_code
+            == FollowJointTrajectory.Result.SUCCESSFUL
+        )
+
+    @staticmethod
+    def _wait_for_future(future, timeout_seconds):
+        deadline = time.monotonic() + timeout_seconds
+        while rclpy.ok() and time.monotonic() < deadline:
+            if future.done():
+                return True
+            time.sleep(0.02)
+        return future.done()
+
+    # ------------------------------------------------------------------
+    # Resume behavior
+    # ------------------------------------------------------------------
+    def _safe_resume_without_wave(self):
+        self.get_logger().warning(
+            'Approach/wave could not be completed; the arm is down, so the '
+            'original goal will be resumed safely'
+        )
+
+        if not self._arm_is_home_now():
+            self._set_state(self.STATE_RETURNING_HOME)
+            self._command_arm_home()
+
+        if not self._wait_until_arm_home():
+            self._set_state(self.STATE_FAILED)
+            return
+
+        self._resume_original_goal()
+
+    def _resume_original_goal(self):
+        with self.state_lock:
+            original_pose = copy.deepcopy(self.original_goal_pose)
+
+        if original_pose is None:
+            self.get_logger().error(
+                'No saved original goal exists to resume'
+            )
+            self._set_state(self.STATE_FAILED)
+            return
+
+        if not self._send_nav_goal(original_pose, self.GOAL_RESUME):
+            self._set_state(self.STATE_FAILED)
 
 
 def main(args=None):
     rclpy.init(args=args)
 
     node = None
-    executor = MultiThreadedExecutor()
+    executor = MultiThreadedExecutor(num_threads=4)
 
     try:
         node = WaveInteraction()
         executor.add_node(node)
         executor.spin()
-
     except KeyboardInterrupt:
         pass
-
     except Exception as error:
         if node is not None:
             node.get_logger().fatal(
@@ -833,13 +1100,10 @@ def main(args=None):
             )
         else:
             print(f'Wave interaction node failed to start: {error}')
-
     finally:
         executor.shutdown()
-
         if node is not None:
             node.destroy_node()
-
         if rclpy.ok():
             rclpy.shutdown()
 

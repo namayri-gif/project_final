@@ -2,6 +2,7 @@
 /root/workspaces/ros2_ws/install/ffw_navigation/share/ffw_navigation/launch/online_sync_launch.py
 /root/workspaces/ros2_ws/install/ffw_navigation/share/ffw_navigation/rviz/mapping.rviz
 /root/workspaces/ros2_ws/install/ffw_navigation/share/ffw_navigation/rviz/navigation.rviz
+/root/workspaces/ros2_ws/install/ffw_navigation/share/ffw_navigation/rviz/navigation.rviz.backup
 /root/workspaces/ros2_ws/install/ffw_navigation/share/ffw_navigation/config/bt/nav_modes.xml
 /root/workspaces/ros2_ws/install/ffw_navigation/share/ffw_navigation/config/mapper_params_online_sync.yaml
 /root/workspaces/ros2_ws/install/ffw_navigation/share/ffw_navigation/config/navigation.yaml
