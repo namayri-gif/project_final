@@ -1,0 +1,4 @@
+source;share/library_world/local_setup.bash
+source;share/library_world/local_setup.dsv
+source;share/library_world/local_setup.sh
+source;share/library_world/local_setup.zsh
