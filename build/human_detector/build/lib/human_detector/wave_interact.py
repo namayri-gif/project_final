@@ -6,8 +6,8 @@ import time
 import rclpy
 from action_msgs.msg import GoalStatus
 from control_msgs.action import FollowJointTrajectory
-from geometry_msgs.msg import PointStamped, PoseStamped
-from nav2_msgs.action import NavigateToPose
+from geometry_msgs.msg import PointStamped, PoseStamped, Twist
+from nav2_msgs.action import NavigateToPose, Spin
 from nav_msgs.msg import Odometry
 from rclpy.action import ActionClient
 from rclpy.callback_groups import ReentrantCallbackGroup
@@ -52,6 +52,7 @@ class WaveInteraction(Node):
     STATE_CANCELLING_ORIGINAL = 'cancelling_original'
     STATE_SENDING_APPROACH = 'sending_approach'
     STATE_NAVIGATING_APPROACH = 'navigating_approach'
+    STATE_ALIGNING = 'aligning_to_person'
     STATE_WAVING = 'waving'
     STATE_RETURNING_HOME = 'returning_home'
     STATE_RESUMING = 'resuming_original'
@@ -73,16 +74,27 @@ class WaveInteraction(Node):
 
         self.declare_parameter('map_frame', 'map')
         self.declare_parameter('base_frame', 'base_link')
-        self.declare_parameter('stand_off_distance', 4.0)
+        self.declare_parameter('stand_off_distance', 1.0)
         self.declare_parameter('approach_skip_margin', 0.15)
-        self.declare_parameter('person_target_max_age', 1.0)
+        self.declare_parameter('person_target_max_age', 3.0)
+        self.declare_parameter('use_fixed_person_fallback', True)
+        self.declare_parameter('fixed_person_x', -1.465)
+        self.declare_parameter('fixed_person_y', -0.050)
+        self.declare_parameter('fixed_person_yaw', 3.123)
+        self.declare_parameter('cmd_vel_topic', '/cmd_vel')
+        self.declare_parameter('spin_action', '/spin')
+        self.declare_parameter('face_person_timeout', 15.0)
+        self.declare_parameter('face_person_yaw_tolerance', 0.06)
+        self.declare_parameter('face_person_max_angular_speed', 0.80)
+        self.declare_parameter('face_person_kp', 1.8)
+        self.declare_parameter('camera_yaw_offset', 0.0)
         self.declare_parameter('base_linear_stop_threshold', 0.01)
         self.declare_parameter('base_angular_stop_threshold', 0.02)
         self.declare_parameter('base_stop_stable_duration', 0.50)
         self.declare_parameter('base_stop_timeout', 8.0)
         self.declare_parameter('arm_home_tolerance', 0.05)
         self.declare_parameter('arm_home_stable_duration', 0.30)
-        self.declare_parameter('arm_home_timeout', 8.0)
+        self.declare_parameter('arm_home_timeout', 30.0)
         self.declare_parameter(
             'arm_controller_action',
             '/arm_r_controller/follow_joint_trajectory',
@@ -98,6 +110,35 @@ class WaveInteraction(Node):
         )
         self.person_target_max_age = float(
             self.get_parameter('person_target_max_age').value
+        )
+        self.use_fixed_person_fallback = bool(
+            self.get_parameter('use_fixed_person_fallback').value
+        )
+        self.fixed_person_x = float(
+            self.get_parameter('fixed_person_x').value
+        )
+        self.fixed_person_y = float(
+            self.get_parameter('fixed_person_y').value
+        )
+        self.fixed_person_yaw = float(
+            self.get_parameter('fixed_person_yaw').value
+        )
+        self.cmd_vel_topic = self.get_parameter('cmd_vel_topic').value
+        self.spin_action = self.get_parameter('spin_action').value
+        self.face_person_timeout = float(
+            self.get_parameter('face_person_timeout').value
+        )
+        self.face_person_yaw_tolerance = float(
+            self.get_parameter('face_person_yaw_tolerance').value
+        )
+        self.face_person_max_angular_speed = float(
+            self.get_parameter('face_person_max_angular_speed').value
+        )
+        self.face_person_kp = float(
+            self.get_parameter('face_person_kp').value
+        )
+        self.camera_yaw_offset = float(
+            self.get_parameter('camera_yaw_offset').value
         )
         self.base_linear_stop_threshold = float(
             self.get_parameter('base_linear_stop_threshold').value
@@ -134,6 +175,10 @@ class WaveInteraction(Node):
         self.interaction_done_for_goal = False
         self.person_present = False
         self.latest_person_target = None
+        self.latest_person_target_map = None
+        self.latest_person_target_is_fixed = False
+        self.interaction_person_target_map = None
+        self.interaction_person_target_is_fixed = False
         self.person_target_received_at = None
 
         self.latest_linear_speed = None
@@ -155,11 +200,27 @@ class WaveInteraction(Node):
             '/navigate_to_pose',
             callback_group=self.callback_group,
         )
+        self.spin_client = ActionClient(
+            self,
+            Spin,
+            self.spin_action,
+            callback_group=self.callback_group,
+        )
         self.arm_trajectory_client = ActionClient(
             self,
             FollowJointTrajectory,
             arm_controller_action,
             callback_group=self.callback_group,
+        )
+        self.cmd_vel_pub = self.create_publisher(
+            Twist,
+            self.cmd_vel_topic,
+            10,
+        )
+        self.interaction_active_pub = self.create_publisher(
+            Bool,
+            '/interaction_active',
+            10,
         )
 
         self.create_subscription(
@@ -375,6 +436,7 @@ class WaveInteraction(Node):
                 self.STATE_CANCELLING_ORIGINAL,
                 self.STATE_SENDING_APPROACH,
                 self.STATE_NAVIGATING_APPROACH,
+                self.STATE_ALIGNING,
                 self.STATE_WAVING,
                 self.STATE_RETURNING_HOME,
                 self.STATE_RESUMING,
@@ -388,6 +450,7 @@ class WaveInteraction(Node):
 
             self.original_goal_pose = copy.deepcopy(msg)
             self.interaction_done_for_goal = False
+            self.interaction_person_target_map = None
 
         self._send_nav_goal(
             copy.deepcopy(msg),
@@ -521,8 +584,8 @@ class WaveInteraction(Node):
                 self.get_logger().info(
                     'Robot reached the person approach position'
                 )
-                self._set_state(self.STATE_WAVING)
-                self._start_worker(self._interaction_wave_worker)
+                self._set_state(self.STATE_ALIGNING)
+                self._start_worker(self._face_person_then_wave_worker)
             else:
                 self.get_logger().info('Navigation goal succeeded')
                 self._set_state(self.STATE_SUCCEEDED)
@@ -535,7 +598,7 @@ class WaveInteraction(Node):
             ):
                 self.get_logger().info(
                     'Original goal is fully cancelled; calculating the '
-                    '1 m person approach goal'
+                    f'{self.stand_off_distance:.2f} m person approach goal'
                 )
                 self._set_state(self.STATE_SENDING_APPROACH)
                 self._start_worker(self._approach_person_worker)
@@ -563,19 +626,94 @@ class WaveInteraction(Node):
     # Detection -> cancel -> approach
     # ------------------------------------------------------------------
     def _person_detected_cb(self, msg: Bool):
+        detected = bool(msg.data)
         with self.state_lock:
-            self.person_present = bool(msg.data)
+            self.person_present = detected
+
+            # The simulated standing person is static. If RGB detection is
+            # valid but no depth-based /person_target has arrived, use the
+            # configured map position so detection still triggers approach.
+            if (
+                detected
+                and self.use_fixed_person_fallback
+                and self.interaction_state == self.STATE_NAVIGATING_ORIGINAL
+                and not self.interaction_done_for_goal
+                and not self._target_is_fresh_locked()
+            ):
+                fallback = PointStamped()
+                fallback.header.frame_id = self.map_frame
+                fallback.header.stamp = self.get_clock().now().to_msg()
+                fallback.point.x = self.fixed_person_x
+                fallback.point.y = self.fixed_person_y
+                fallback.point.z = 0.0
+                self.latest_person_target_map = fallback
+                self.latest_person_target_is_fixed = True
+                self.person_target_received_at = time.monotonic()
+                self.get_logger().warning(
+                    'No fresh depth target; using configured standing-person '
+                    f'position ({self.fixed_person_x:.3f}, '
+                    f'{self.fixed_person_y:.3f}) in map'
+                )
+
         self._try_start_interaction()
 
     def _person_target_cb(self, msg: PointStamped):
+        # Convert the detected 3D point to map coordinates immediately.
+        # Once interaction starts, this map point is frozen so losing the
+        # camera detection while turning does not cancel the interaction.
+        target_map = self._person_target_to_map(msg)
+        if target_map is None:
+            return
+
         with self.state_lock:
             self.latest_person_target = copy.deepcopy(msg)
+            self.latest_person_target_map = target_map
+            self.latest_person_target_is_fixed = False
             self.person_target_received_at = time.monotonic()
+
         self._try_start_interaction()
+
+    def _person_target_to_map(self, msg: PointStamped):
+        if not msg.header.frame_id:
+            return None
+
+        if msg.header.frame_id == self.map_frame:
+            result = copy.deepcopy(msg)
+            result.header.frame_id = self.map_frame
+            result.header.stamp = self.get_clock().now().to_msg()
+            return result
+
+        try:
+            source_to_map = self.tf_buffer.lookup_transform(
+                self.map_frame,
+                msg.header.frame_id,
+                Time(),
+                timeout=Duration(seconds=0.30),
+            )
+        except TransformException as error:
+            self.get_logger().warning(
+                f'Cannot transform person target to map yet: {error}'
+            )
+            return None
+
+        x, y, z = self._transform_point(
+            msg.point.x,
+            msg.point.y,
+            msg.point.z,
+            source_to_map,
+        )
+
+        result = PointStamped()
+        result.header.frame_id = self.map_frame
+        result.header.stamp = self.get_clock().now().to_msg()
+        result.point.x = x
+        result.point.y = y
+        result.point.z = z
+        return result
 
     def _target_is_fresh_locked(self):
         return (
-            self.latest_person_target is not None
+            self.latest_person_target_map is not None
             and self.person_target_received_at is not None
             and (
                 time.monotonic() - self.person_target_received_at
@@ -596,14 +734,22 @@ class WaveInteraction(Node):
             if not self._target_is_fresh_locked():
                 return
 
+            # Freeze the person's map position before cancelling Nav2.
+            self.interaction_person_target_map = copy.deepcopy(
+                self.latest_person_target_map
+            )
+            self.interaction_person_target_is_fixed = (
+                self.latest_person_target_is_fixed
+            )
             self.interaction_done_for_goal = True
             self.interaction_state = self.STATE_CANCELLING_ORIGINAL
             goal_handle = self.active_goal_handle
             sequence = self.active_goal_sequence
 
         self.get_logger().info(
-            'Person detected with valid depth; cancelling the original goal'
+            'Person detected and position latched; cancelling original goal'
         )
+        self.interaction_active_pub.publish(Bool(data=True))
 
         try:
             cancel_future = goal_handle.cancel_goal_async()
@@ -620,6 +766,8 @@ class WaveInteraction(Node):
             with self.state_lock:
                 if sequence == self.active_goal_sequence:
                     self.interaction_done_for_goal = False
+                    self.interaction_person_target_map = None
+                    self.interaction_person_target_is_fixed = False
                     self.interaction_state = self.STATE_NAVIGATING_ORIGINAL
 
     def _after_cancel_request(self, future, sequence):
@@ -654,21 +802,21 @@ class WaveInteraction(Node):
         )
 
     def _approach_person_worker(self):
-        approach_pose, current_distance = self._build_approach_pose_with_retries()
+        approach_pose, distance_to_goal = (
+            self._build_approach_pose_with_retries()
+        )
 
-        if approach_pose is None or current_distance is None:
+        if approach_pose is None or distance_to_goal is None:
             self.get_logger().error(
-                'Could not transform the person target into the map frame'
+                'Could not calculate the person approach goal'
             )
             self._safe_resume_without_wave()
             return
 
-        if current_distance <= (
-            self.stand_off_distance + self.approach_skip_margin
-        ):
+        if distance_to_goal <= self.approach_skip_margin:
             self.get_logger().info(
-                f'Robot is already {current_distance:.2f} m from the person; '
-                'no approach movement is required'
+                f'Robot is already at the approach point '
+                f'({distance_to_goal:.2f} m away)'
             )
             self._set_state(self.STATE_WAVING)
             self._interaction_wave_worker()
@@ -678,7 +826,7 @@ class WaveInteraction(Node):
             self._safe_resume_without_wave()
 
     def _build_approach_pose_with_retries(self):
-        for _ in range(10):
+        for _ in range(20):
             result = self._build_approach_pose()
             if result[0] is not None:
                 return result
@@ -687,20 +835,17 @@ class WaveInteraction(Node):
 
     def _build_approach_pose(self):
         with self.state_lock:
-            if not self._target_is_fresh_locked():
-                return None, None
-            person_target = copy.deepcopy(self.latest_person_target)
+            # Use the person position frozen at first detection. Continuous
+            # camera detection is not required during cancellation/approach.
+            person_target = copy.deepcopy(
+                self.interaction_person_target_map
+            )
+            target_is_fixed = self.interaction_person_target_is_fixed
 
-        if not person_target.header.frame_id:
+        if person_target is None:
             return None, None
 
         try:
-            camera_to_map = self.tf_buffer.lookup_transform(
-                self.map_frame,
-                person_target.header.frame_id,
-                Time(),
-                timeout=Duration(seconds=0.50),
-            )
             base_to_map = self.tf_buffer.lookup_transform(
                 self.map_frame,
                 self.base_frame,
@@ -709,16 +854,13 @@ class WaveInteraction(Node):
             )
         except TransformException as error:
             self.get_logger().warning(
-                f'Waiting for person/base TF: {error}'
+                f'Waiting for robot base TF: {error}'
             )
             return None, None
 
-        person_x, person_y, person_z = self._transform_point(
-            person_target.point.x,
-            person_target.point.y,
-            person_target.point.z,
-            camera_to_map,
-        )
+        person_x = person_target.point.x
+        person_y = person_target.point.y
+        person_z = person_target.point.z
 
         robot_x = base_to_map.transform.translation.x
         robot_y = base_to_map.transform.translation.y
@@ -730,11 +872,36 @@ class WaveInteraction(Node):
         if not math.isfinite(distance) or distance < 0.05:
             return None, None
 
-        approach_x = person_x - self.stand_off_distance * delta_x / distance
-        approach_y = person_y - self.stand_off_distance * delta_y / distance
+        if target_is_fixed:
+            # The standing person's yaw is known. Approach one metre in front
+            # of the person rather than stopping behind them.
+            approach_x = (
+                person_x
+                + self.stand_off_distance * math.cos(self.fixed_person_yaw)
+            )
+            approach_y = (
+                person_y
+                + self.stand_off_distance * math.sin(self.fixed_person_yaw)
+            )
+        else:
+            # For a live depth target, approach along the current robot-person
+            # line while keeping the configured stand-off distance.
+            approach_x = (
+                person_x
+                - self.stand_off_distance * delta_x / distance
+            )
+            approach_y = (
+                person_y
+                - self.stand_off_distance * delta_y / distance
+            )
+
         approach_yaw = math.atan2(
             person_y - approach_y,
             person_x - approach_x,
+        )
+        distance_to_goal = math.hypot(
+            approach_x - robot_x,
+            approach_y - robot_y,
         )
 
         pose = PoseStamped()
@@ -746,14 +913,20 @@ class WaveInteraction(Node):
         pose.pose.orientation.z = math.sin(approach_yaw / 2.0)
         pose.pose.orientation.w = math.cos(approach_yaw / 2.0)
 
+        approach_type = (
+            'fixed front approach'
+            if target_is_fixed
+            else 'live-target approach'
+        )
         self.get_logger().info(
-            'Person target in map: '
+            'Latched person target in map: '
             f'({person_x:.2f}, {person_y:.2f}, {person_z:.2f}); '
-            f'current distance={distance:.2f} m; '
-            f'approach goal=({approach_x:.2f}, {approach_y:.2f})'
+            f'{approach_type}; '
+            f'approach goal=({approach_x:.2f}, {approach_y:.2f}); '
+            f'robot-to-goal distance={distance_to_goal:.2f} m'
         )
 
-        return pose, distance
+        return pose, distance_to_goal
 
     @staticmethod
     def _transform_point(x, y, z, transform_stamped):
@@ -777,6 +950,130 @@ class WaveInteraction(Node):
             transform.translation.z + r20 * x + r21 * y + r22 * z,
         )
 
+    @staticmethod
+    def _normalize_angle(angle):
+        return math.atan2(math.sin(angle), math.cos(angle))
+
+    @staticmethod
+    def _yaw_from_quaternion(q):
+        siny_cosp = 2.0 * (q.w * q.z + q.x * q.y)
+        cosy_cosp = 1.0 - 2.0 * (q.y * q.y + q.z * q.z)
+        return math.atan2(siny_cosp, cosy_cosp)
+
+    def _stop_base_command(self):
+        self.cmd_vel_pub.publish(Twist())
+
+    def _current_face_error(self, person_target):
+        try:
+            base_to_map = self.tf_buffer.lookup_transform(
+                self.map_frame,
+                self.base_frame,
+                Time(),
+                timeout=Duration(seconds=0.50),
+            )
+        except TransformException as error:
+            self.get_logger().warning(
+                f'Cannot calculate person-facing angle: {error}'
+            )
+            return None
+
+        robot_x = base_to_map.transform.translation.x
+        robot_y = base_to_map.transform.translation.y
+        robot_yaw = self._yaw_from_quaternion(
+            base_to_map.transform.rotation
+        )
+        desired_yaw = math.atan2(
+            person_target.point.y - robot_y,
+            person_target.point.x - robot_x,
+        ) - self.camera_yaw_offset
+
+        # Always return the shortest signed rotation in [-pi, pi].
+        return self._normalize_angle(desired_yaw - robot_yaw)
+
+    def _face_person(self):
+        """Use Nav2 Spin so the base takes the shortest turn to the person."""
+        with self.state_lock:
+            person_target = copy.deepcopy(self.interaction_person_target_map)
+
+        if person_target is None:
+            self.get_logger().error('Cannot face person: no latched target')
+            return False
+
+        yaw_error = self._current_face_error(person_target)
+        if yaw_error is None:
+            return False
+
+        if abs(yaw_error) <= self.face_person_yaw_tolerance:
+            self.get_logger().info('Robot already faces the person')
+            return True
+
+        if not self.spin_client.wait_for_server(timeout_sec=5.0):
+            self.get_logger().error('Nav2 Spin action server is unavailable')
+            return False
+
+        direction = 'left' if yaw_error > 0.0 else 'right'
+        self.get_logger().info(
+            f'Facing person with shortest {direction} turn: '
+            f'{math.degrees(abs(yaw_error)):.1f} deg'
+        )
+
+        goal = Spin.Goal()
+        goal.target_yaw = float(yaw_error)
+        timeout_whole = int(self.face_person_timeout)
+        goal.time_allowance.sec = timeout_whole
+        goal.time_allowance.nanosec = int(
+            (self.face_person_timeout - timeout_whole) * 1.0e9
+        )
+
+        send_future = self.spin_client.send_goal_async(goal)
+        if not self._wait_for_future(send_future, 5.0):
+            self.get_logger().error('Timed out sending shortest-turn goal')
+            return False
+
+        goal_handle = send_future.result()
+        if goal_handle is None or not goal_handle.accepted:
+            self.get_logger().error('Nav2 rejected shortest-turn goal')
+            return False
+
+        result_future = goal_handle.get_result_async()
+        if not self._wait_for_future(
+            result_future,
+            self.face_person_timeout + 5.0,
+        ):
+            self.get_logger().error('Shortest-turn action timed out')
+            cancel_future = goal_handle.cancel_goal_async()
+            self._wait_for_future(cancel_future, 2.0)
+            return False
+
+        wrapped_result = result_future.result()
+        if wrapped_result.status != GoalStatus.STATUS_SUCCEEDED:
+            self.get_logger().error(
+                'Shortest-turn action failed with status '
+                f'{wrapped_result.status}'
+            )
+            return False
+
+        time.sleep(0.20)
+        final_error = self._current_face_error(person_target)
+        if final_error is None:
+            return False
+
+        if abs(final_error) > self.face_person_yaw_tolerance:
+            self.get_logger().warning(
+                'Spin completed but final facing error is '
+                f'{math.degrees(abs(final_error)):.1f} deg'
+            )
+            return False
+
+        self.get_logger().info('Robot is facing the person; starting wave')
+        return True
+
+    def _face_person_then_wave_worker(self):
+        self._face_person()
+        self._stop_base_command()
+        self._set_state(self.STATE_WAVING)
+        self._interaction_wave_worker()
+
     # ------------------------------------------------------------------
     # Wave and safety sequencing
     # ------------------------------------------------------------------
@@ -793,6 +1090,7 @@ class WaveInteraction(Node):
                 self.STATE_CANCELLING_ORIGINAL,
                 self.STATE_SENDING_APPROACH,
                 self.STATE_NAVIGATING_APPROACH,
+                self.STATE_ALIGNING,
                 self.STATE_RESUMING,
             }:
                 self.get_logger().warning(
@@ -823,6 +1121,14 @@ class WaveInteraction(Node):
 
         wave_success = self.do_wave()
         home_verified = self._wait_until_arm_home()
+        if not home_verified:
+            self.get_logger().warning(
+                'Arm is not home yet; sending a dedicated home command'
+            )
+            self._set_state(self.STATE_RETURNING_HOME)
+            self._command_arm_home()
+            home_verified = self._wait_until_arm_home()
+            self._set_state(self.STATE_WAVING)
         base_still_stopped = self._wait_until_base_stopped()
 
         if not wave_success:
@@ -836,11 +1142,17 @@ class WaveInteraction(Node):
                 'Navigation will not resume because the base safety check failed'
             )
 
-        if wave_success and home_verified and base_still_stopped:
-            self.get_logger().info(
-                'Wave completed, arm is at zero, and base is stationary; '
-                'resuming the original goal'
-            )
+        if home_verified and base_still_stopped:
+            if wave_success:
+                self.get_logger().info(
+                    'Wave completed, arm is at zero, and base is stationary; '
+                    'resuming the original goal'
+                )
+            else:
+                self.get_logger().warning(
+                    'Wave controller did not report success, but the arm is home '
+                    'and the base is stationary; resuming the original goal'
+                )
             self._resume_original_goal()
         else:
             self._set_state(self.STATE_FAILED)
@@ -869,23 +1181,26 @@ class WaveInteraction(Node):
         trajectory = JointTrajectory()
         trajectory.joint_names = list(ARM_R_JOINT_NAMES)
 
-        # Current pose -> arm out -> elbow up -> two quick wrist cycles ->
-        # all seven joints exactly zero. Total duration: 4.2 seconds.
+        # Current pose -> arm out -> elbow up -> two fast wrist cycles ->
+        # all seven joints exactly zero. Total commanded duration: 6.55 seconds.
         wave_left = list(ELBOW_UP_POSITION)
         wave_right = list(ELBOW_UP_POSITION)
         wave_left[5] = math.radians(-WRIST_WAVE_DEGREES)
         wave_right[5] = math.radians(WRIST_WAVE_DEGREES)
 
+        # Maximum safe trajectory for the configured 5 rad/s velocity and
+        # 5 rad/s^2 acceleration limits. Shorter timings can exceed the
+        # acceleration limit and cause the controller to stall or time out.
         sequence = [
-            (0.10, current_positions),
-            (0.80, SIDE_ARM_POSITION),
-            (1.50, ELBOW_UP_POSITION),
-            (1.85, wave_left),
-            (2.20, wave_right),
-            (2.55, wave_left),
-            (2.90, wave_right),
-            (3.25, ELBOW_UP_POSITION),
-            (4.20, HOME_ARM_POSITIONS),
+            (0.05, current_positions),
+            (1.05, SIDE_ARM_POSITION),
+            (2.25, ELBOW_UP_POSITION),
+            (2.75, wave_left),
+            (3.45, wave_right),
+            (4.15, wave_left),
+            (4.85, wave_right),
+            (5.35, ELBOW_UP_POSITION),
+            (6.55, HOME_ARM_POSITIONS),
         ]
 
         for seconds, positions in sequence:
@@ -895,10 +1210,10 @@ class WaveInteraction(Node):
 
         goal = FollowJointTrajectory.Goal()
         goal.trajectory = trajectory
-        goal.goal_time_tolerance.sec = 1
+        goal.goal_time_tolerance.sec = 10
 
         self.get_logger().info(
-            'Executing fast wave and returning all right-arm joints to zero'
+            'Executing maximum-safe wave and returning all right-arm joints to zero'
         )
 
         send_future = self.arm_trajectory_client.send_goal_async(goal)
@@ -912,7 +1227,7 @@ class WaveInteraction(Node):
             return False
 
         result_future = goal_handle.get_result_async()
-        deadline = time.monotonic() + 7.0
+        deadline = time.monotonic() + 60.0
         base_moved = False
 
         while rclpy.ok() and time.monotonic() < deadline:
@@ -1012,12 +1327,12 @@ class WaveInteraction(Node):
         trajectory.joint_names = list(ARM_R_JOINT_NAMES)
         trajectory.points = [
             self._trajectory_point(current_positions, 0.10),
-            self._trajectory_point(HOME_ARM_POSITIONS, 1.20),
+            self._trajectory_point(HOME_ARM_POSITIONS, 2.50),
         ]
 
         goal = FollowJointTrajectory.Goal()
         goal.trajectory = trajectory
-        goal.goal_time_tolerance.sec = 1
+        goal.goal_time_tolerance.sec = 10
 
         send_future = self.arm_trajectory_client.send_goal_async(goal)
         if not self._wait_for_future(send_future, 3.0):
@@ -1028,7 +1343,7 @@ class WaveInteraction(Node):
             return False
 
         result_future = goal_handle.get_result_async()
-        if not self._wait_for_future(result_future, 4.0):
+        if not self._wait_for_future(result_future, 30.0):
             return False
 
         wrapped_result = result_future.result()
@@ -1067,6 +1382,7 @@ class WaveInteraction(Node):
         self._resume_original_goal()
 
     def _resume_original_goal(self):
+        self.interaction_active_pub.publish(Bool(data=False))
         with self.state_lock:
             original_pose = copy.deepcopy(self.original_goal_pose)
 
@@ -1109,4 +1425,4 @@ def main(args=None):
 
 
 if __name__ == '__main__':
-    main()
+    main

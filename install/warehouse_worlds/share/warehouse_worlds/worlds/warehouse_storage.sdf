@@ -403,10 +403,12 @@
       </link>
     </model>
 
+    
     <include>
       <uri>https://fuel.gazebosim.org/1.0/OpenRobotics/models/Standing person</uri>
       <pose>3.0 1.5 0 0 0 0</pose>
     </include>
+
 
   </world>
 </sdf>

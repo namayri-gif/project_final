@@ -1,3 +1,10 @@
+# joint_limits.yaml allows the dynamics properties specified in the URDF
+# to be overwritten or augmented as needed.
+
+# Conservative defaults for simulation.
+default_velocity_scaling_factor: 1.0
+default_acceleration_scaling_factor: 1.0
+
 joint_limits:
 
   arm_l_joint1:
